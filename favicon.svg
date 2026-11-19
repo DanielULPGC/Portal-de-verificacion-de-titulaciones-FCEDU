@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="ULPGC Ciencias de la Educación">
+  <rect width="64" height="64" rx="14" fill="#1f4e5f"/>
+  <rect x="4" y="4" width="56" height="56" rx="11" fill="none" stroke="#f2b705" stroke-width="2.5"/>
+  <path d="M16 20c6-2 12-1 16 2 4-3 10-4 16-2v24c-6-2-12-1-16 2-4-3-10-4-16-2V20z" fill="#faf9f5"/>
+  <path d="M32 22v24" stroke="#1f4e5f" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M21 27h6M21 33h6M37 27h6M37 33h6" stroke="#1f4e5f" stroke-width="2.2" stroke-linecap="round"/>
+  <circle cx="32" cy="14" r="3.2" fill="#f2b705"/>
+</svg>
