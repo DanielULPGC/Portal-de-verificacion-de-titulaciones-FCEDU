@@ -1,0 +1,15 @@
+Portal de Memorias de Verificación — Facultad de Ciencias de la Educación (ULPGC)
+================================================================================
+
+Este paquete contiene la aplicación web ya compilada y lista para publicar en GitHub Pages
+directamente desde la raíz del repositorio (/ root), sin necesidad de Node.js ni compilación.
+
+Pasos rápidos para publicar en GitHub Pages:
+1. Descomprime este archivo ZIP.
+2. Sube todos los archivos y carpetas extraídos (index.html, 404.html, .nojekyll, assets/, etc.)
+   a la raíz de tu repositorio en GitHub (rama main).
+3. En tu repositorio de GitHub, ve a: Settings -> Pages -> Build and deployment:
+   - Source: Deploy from a branch
+   - Branch: main
+   - Folder: / (root)
+4. Guarda los cambios. En 1-2 minutos el portal estará publicado y operativo.

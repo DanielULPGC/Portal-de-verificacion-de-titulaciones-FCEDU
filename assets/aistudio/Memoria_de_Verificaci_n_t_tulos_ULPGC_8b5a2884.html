@@ -1,0 +1,2335 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="artifact-type" content="dashboard">
+  <meta name="design-style" content="briefing">
+  <title>Portal Académico de Memorias de Verificación y Normativa ULPGC</title>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
+  <script src="https://unpkg.com/lucide@1.43.0/dist/umd/lucide.min.js"></script>
+  <style>
+    :root {
+      color-scheme: light;
+
+      /* Page and surfaces: warm stone-white paper (Briefing) */
+      --background: #faf9f5;
+      --surface-container-low: #ffffff;
+      --surface-container: #f1efe8;
+      --surface-container-high: #e6e2d6;
+
+      /* Ink */
+      --on-surface: #17181a;
+      --on-surface-variant: #56585c;
+
+      /* Rules */
+      --outline: #17181a;
+      --outline-variant: #dedad0;
+      --border-button-secondary: #c8c4b8;
+
+      /* Accents */
+      --primary: #17181a;
+      --on-primary: #faf9f5;
+      --primary-container: #f2b705;
+      --on-primary-container: #17181a;
+      --secondary: #1f4e5f;
+      --secondary-soft: #e7eff2;
+      --tertiary: #785008;
+      --tertiary-soft: #f5e6c4;
+      --error: #b42318;
+      --error-soft: #fbeae8;
+      --on-error: #ffffff;
+
+      /* Semantic */
+      --positive: #2b6e52;
+      --positive-soft: #e5f1ec;
+      --warning: #785008;
+      --focus: #1f4e5f;
+
+      /* Data series */
+      --data-1: #1f4e5f;
+      --data-2: #d99000;
+      --data-3: #2b6e52;
+      --data-4: #b84a39;
+      --data-5: #56585c;
+      --data-context: #c4bfb2;
+
+      /* Fonts */
+      --font-headline: 'Source Serif 4', serif;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
+      --font-label: 'Geist Mono', monospace;
+
+      /* Type scale (Dashboard / Data Explorer) */
+      --display-size: clamp(1.75rem, 1.4rem + 1.2vw, 2.25rem);
+      --headline-size: clamp(1.25rem, 1.1rem + 0.5vw, 1.5rem);
+      --subhead-size: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
+      --body-size: clamp(0.9375rem, 0.9rem + 0.15vw, 1rem);
+      --label-size: 0.75rem;
+
+      /* Spacing scale */
+      --space-xs: 0.25rem;
+      --space-sm: 0.5rem;
+      --space-md: 1rem;
+      --space-lg: 1.5rem;
+      --space-xl: 2.5rem;
+      --space-2xl: 4rem;
+
+      /* Shape */
+      --rounded: 0.25rem;
+      --rounded-lg: 0.375rem;
+      --rounded-full: 0.25rem;
+      --badge-radius: 2px;
+
+      /* Style effects */
+      --section-rule: 1.5px solid var(--outline);
+      --card-border: 1px solid var(--outline-variant);
+      --button-border-sec: 1px solid var(--border-button-secondary);
+      --heading-tracking: -0.02em;
+      --label-tracking: 0.08em;
+
+      /* Motion */
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+      --dur-micro: 120ms;
+      --dur-short: 220ms;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body {
+      overflow-x: clip;
+      margin: 0;
+      padding: 0;
+      background-color: var(--background);
+      color: var(--on-surface);
+      font-family: var(--font-body);
+      font-size: var(--body-size);
+      line-height: 1.6;
+    }
+    header { position: static !important; }
+
+    .page-grid {
+      display: grid;
+      gap: var(--space-xl);
+      padding: var(--space-lg);
+      max-width: 1240px;
+      margin: 0 auto;
+      overflow: hidden;
+    }
+    .page-grid * { min-width: 0; }
+
+    /* Focus states */
+    :focus-visible {
+      outline: 2px solid var(--focus);
+      outline-offset: 2px;
+    }
+
+    /* Typography */
+    h1, h2, h3, h4 {
+      font-family: var(--font-headline);
+      font-weight: 600;
+      letter-spacing: var(--heading-tracking);
+      color: var(--on-surface);
+      margin: 0;
+    }
+    .title {
+      font-size: var(--display-size);
+      line-height: 1.08;
+    }
+    .section-title {
+      font-size: var(--headline-size);
+      line-height: 1.15;
+    }
+    .card-title {
+      font-size: var(--subhead-size);
+      line-height: 1.25;
+    }
+    .standfirst {
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: var(--subhead-size);
+      color: var(--secondary);
+      margin-top: var(--space-sm);
+      margin-bottom: 0;
+      max-width: 72ch;
+    }
+    p { margin: 0; }
+    .prose { max-width: 65ch; }
+
+    /* Dossier Header & Section Bars */
+    .dossier-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-sm);
+      border-bottom: var(--section-rule);
+      padding-bottom: var(--space-sm);
+      margin-bottom: var(--space-md);
+    }
+    .dossier-bar-left {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+    .dossier-pill {
+      background: var(--primary-container);
+      color: var(--on-primary-container);
+      font-family: var(--font-body);
+      font-weight: 700;
+      font-size: var(--label-size);
+      letter-spacing: var(--label-tracking);
+      text-transform: uppercase;
+      padding: var(--space-xs) var(--space-sm);
+      border-radius: var(--badge-radius);
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+    .dossier-meta {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      font-weight: 500;
+      color: var(--on-surface-variant);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .index-num {
+      font-family: var(--font-label);
+      font-weight: 600;
+      font-size: var(--label-size);
+      color: var(--secondary);
+      background: var(--surface-container);
+      padding: var(--space-xs) var(--space-sm);
+      border-radius: var(--badge-radius);
+    }
+
+    /* Header Navigation & Actions */
+    .top-nav-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+      margin-top: var(--space-lg);
+      padding-top: var(--space-md);
+      border-top: var(--card-border);
+    }
+    .anchor-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+    }
+    .anchor-link {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--secondary);
+      text-decoration: none;
+      padding: var(--space-sm) var(--space-md);
+      border: var(--card-border);
+      background: var(--surface-container-low);
+      border-radius: var(--rounded);
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      transition: background-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out);
+    }
+    .anchor-link:hover {
+      background: var(--surface-container);
+      color: var(--on-surface);
+    }
+    .header-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+      align-items: center;
+    }
+
+    /* Buttons */
+    .btn {
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 0.875rem;
+      border-radius: var(--rounded);
+      padding: var(--space-sm) var(--space-md);
+      min-height: 44px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-sm);
+      transition: background-color var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-out);
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: var(--on-primary);
+      border: 1px solid var(--primary);
+    }
+    .btn-primary:hover {
+      background: var(--secondary);
+      border-color: var(--secondary);
+    }
+    .btn-secondary {
+      background: var(--surface-container-low);
+      color: var(--on-surface);
+      border: var(--button-border-sec);
+    }
+    .btn-secondary:hover {
+      background: var(--surface-container-high);
+    }
+    .btn:active { transform: translateY(1px); }
+
+    /* KPI Strip */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
+      gap: var(--space-md);
+    }
+    .figure-card {
+      background: var(--surface-container-low);
+      border: var(--card-border);
+      border-radius: var(--rounded-lg);
+      padding: var(--space-md) var(--space-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xs);
+    }
+    .figure-label {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--on-surface-variant);
+    }
+    .figure-value {
+      font-family: var(--font-headline);
+      font-weight: 600;
+      font-size: clamp(1.625rem, 1.3rem + 1vw, 2.125rem);
+      line-height: 1.1;
+      font-variant-numeric: lining-nums tabular-nums;
+      color: var(--on-surface);
+    }
+    .figure-note {
+      font-size: 0.875rem;
+      color: var(--on-surface-variant);
+    }
+
+    /* Filter Bar */
+    .filter-toolbar {
+      background: var(--surface-container);
+      border-top: var(--section-rule);
+      border-radius: var(--rounded-lg);
+      padding: var(--space-md) var(--space-lg);
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr);
+      gap: var(--space-md);
+      align-items: end;
+    }
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xs);
+    }
+    .field-label {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--on-surface);
+    }
+    .input-control, .select-control {
+      font-family: var(--font-body);
+      font-size: var(--body-size);
+      color: var(--on-surface);
+      background: var(--surface-container-low);
+      border: var(--button-border-sec);
+      border-radius: var(--rounded);
+      padding: var(--space-sm) var(--space-md);
+      min-height: 44px;
+      width: 100%;
+    }
+    .select-control {
+      padding-right: var(--space-xl);
+    }
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+      margin-top: var(--space-md);
+    }
+    .filter-chip {
+      font-family: var(--font-body);
+      font-size: 0.875rem;
+      font-weight: 600;
+      padding: var(--space-sm) var(--space-md);
+      min-height: 44px;
+      border-radius: var(--rounded);
+      border: var(--button-border-sec);
+      background: var(--surface-container-low);
+      color: var(--on-surface);
+      cursor: pointer;
+      transition: background-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out);
+    }
+    .filter-chip:hover {
+      background: var(--surface-container-high);
+    }
+    .filter-chip.is-active {
+      background: var(--primary);
+      color: var(--on-primary);
+      border-color: var(--primary);
+    }
+
+    /* Degree Catalog Grid & Cards */
+    .catalog-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
+      gap: var(--space-lg);
+      align-items: start;
+    }
+    .degree-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr));
+      gap: var(--space-lg);
+      margin-top: var(--space-lg);
+    }
+    .degree-card {
+      background: var(--surface-container-low);
+      border: var(--card-border);
+      border-radius: var(--rounded-lg);
+      padding: var(--space-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+      transition: border-color var(--dur-short) var(--ease-out);
+    }
+    .degree-card-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: var(--space-sm);
+      border-bottom: var(--card-border);
+      padding-bottom: var(--space-sm);
+    }
+    .tag {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: var(--space-xs) var(--space-sm);
+      border-radius: var(--rounded);
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+    .tag-amber {
+      background: var(--tertiary-soft);
+      color: var(--tertiary);
+    }
+    .tag-petrol {
+      background: var(--secondary-soft);
+      color: var(--secondary);
+    }
+    .tag-positive {
+      background: var(--positive-soft);
+      color: var(--positive);
+    }
+    .tag-error {
+      background: var(--error-soft);
+      color: var(--error);
+    }
+    .tag-gold {
+      background: var(--primary-container);
+      color: var(--on-primary-container);
+    }
+
+    .ects-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(85px, 1fr));
+      gap: var(--space-sm);
+      background: var(--surface-container);
+      padding: var(--space-sm) var(--space-md);
+      border-radius: var(--rounded);
+    }
+    .ects-cell {
+      display: flex;
+      flex-direction: column;
+    }
+    .ects-num {
+      font-family: var(--font-headline);
+      font-weight: 700;
+      font-size: 1.125rem;
+      font-variant-numeric: tabular-nums;
+      color: var(--on-surface);
+    }
+    .ects-lbl {
+      font-family: var(--font-label);
+      font-size: 0.7rem;
+      color: var(--on-surface-variant);
+      text-transform: uppercase;
+    }
+
+    .mentions-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xs);
+    }
+    .mentions-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: var(--space-xs) 0;
+      border-bottom: 1px dashed var(--outline-variant);
+      font-size: 0.92rem;
+    }
+    .mentions-item:last-child { border-bottom: none; }
+    .mentions-item.is-highlighted {
+      background: var(--tertiary-soft);
+      padding: var(--space-xs) var(--space-sm);
+      border-radius: var(--rounded);
+    }
+
+    .alert-box {
+      padding: var(--space-md);
+      border-radius: var(--rounded);
+      border-left: 4px solid var(--secondary);
+      background: var(--surface-container);
+      font-size: 0.92rem;
+    }
+    .alert-box.is-warning {
+      border-left-color: var(--tertiary);
+      background: var(--tertiary-soft);
+    }
+    .alert-box.is-error {
+      border-left-color: var(--error);
+      background: var(--error-soft);
+    }
+    .alert-box.is-positive {
+      border-left-color: var(--positive);
+      background: var(--positive-soft);
+    }
+
+    /* Charts */
+    .chart-card {
+      background: var(--surface-container-low);
+      border: var(--card-border);
+      border-radius: var(--rounded-lg);
+      padding: var(--space-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+    .chart-box {
+      position: relative;
+      width: 100%;
+      min-height: 310px;
+    }
+
+    /* Simulator Layout */
+    .simulator-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+      gap: var(--space-lg);
+      align-items: start;
+    }
+    .sim-panel {
+      background: var(--surface-container-low);
+      border: var(--card-border);
+      border-radius: var(--rounded-lg);
+      padding: var(--space-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+    .sim-row-2 {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: var(--space-md);
+      align-items: end;
+    }
+    .slider-pair {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 105px;
+      gap: var(--space-sm);
+      align-items: center;
+    }
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--secondary);
+      min-height: 44px;
+      cursor: pointer;
+    }
+    .preset-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+    }
+    .verdict-banner {
+      padding: var(--space-lg);
+      border-radius: var(--rounded-lg);
+      border: 1.5px solid var(--outline);
+      background: var(--surface-container-low);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+    .verdict-banner.is-pass {
+      border-color: var(--positive);
+      background: var(--positive-soft);
+    }
+    .verdict-banner.is-fail {
+      border-color: var(--error);
+      background: var(--error-soft);
+    }
+    .verdict-title {
+      font-family: var(--font-headline);
+      font-size: var(--headline-size);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+    .checklist-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+    .checklist-table th {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      text-align: left;
+      padding: var(--space-sm);
+      border-bottom: var(--section-rule);
+      color: var(--on-surface-variant);
+    }
+    .checklist-table td {
+      padding: var(--space-sm);
+      border-bottom: var(--card-border);
+      vertical-align: top;
+    }
+    .num-cell {
+      font-family: var(--font-label);
+      font-variant-numeric: tabular-nums;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    /* Practicum Section */
+    .practicum-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+      gap: var(--space-lg);
+      align-items: start;
+    }
+    .hour-bar-track {
+      width: 100%;
+      height: 22px;
+      background: var(--surface-container-high);
+      border-radius: var(--rounded);
+      overflow: hidden;
+      display: flex;
+      margin: var(--space-sm) 0;
+    }
+    .hour-seg-1 { background: var(--data-1); }
+    .hour-seg-2 { background: var(--data-2); }
+    .hour-seg-3 { background: var(--data-3); }
+
+    /* Tables */
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      background: var(--surface-container-low);
+      border: var(--card-border);
+      border-radius: var(--rounded-lg);
+    }
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+    }
+    .data-table thead th {
+      background: var(--surface-container);
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--on-surface);
+      padding: var(--space-md);
+      text-align: left;
+      border-bottom: var(--section-rule);
+      cursor: pointer;
+      user-select: none;
+    }
+    .data-table thead th.num-col { text-align: right; }
+    .data-table tbody td {
+      padding: var(--space-sm) var(--space-md);
+      border-bottom: var(--card-border);
+      vertical-align: top;
+    }
+    .data-table tbody tr:hover {
+      background: var(--surface-container);
+    }
+
+    /* Aside / Notes */
+    .aside-box {
+      background: var(--surface-container);
+      border-top: var(--section-rule);
+      padding: var(--space-md) var(--space-lg);
+      border-radius: var(--rounded-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+
+    /* 2-col layout helpers */
+    .two-col {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(360px, 100%), 1fr));
+      gap: var(--space-lg);
+    }
+
+    /* Inline status toast */
+    .status-banner {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      color: var(--secondary);
+      padding: var(--space-xs) var(--space-sm);
+      border-radius: var(--rounded);
+      background: var(--secondary-soft);
+      display: none;
+    }
+    .status-banner.is-visible {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+
+    /* Sources Footer */
+    .sources-footer {
+      border-top: var(--section-rule);
+      padding-top: var(--space-lg);
+      padding-bottom: var(--space-xl);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+      color: var(--on-surface-variant);
+      font-size: 0.875rem;
+    }
+    .sources-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+      gap: var(--space-sm) var(--space-lg);
+      padding-left: var(--space-md);
+      margin: 0;
+    }
+
+    @media (max-width: 900px) {
+      .catalog-layout,
+      .simulator-grid,
+      .practicum-grid {
+        grid-template-columns: 1fr;
+      }
+      .filter-toolbar {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page-grid {
+        padding: var(--space-md);
+        gap: var(--space-lg);
+      }
+      .sim-row-2 {
+        grid-template-columns: 1fr;
+      }
+      .slider-pair {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-grid">
+
+    <!-- CABECERA DEL DOSSIER -->
+    <header>
+      <div class="dossier-bar">
+        <div class="dossier-bar-left">
+          <span class="dossier-pill">DOSSIER NORMATIVO · ULPGC</span>
+          <span class="dossier-meta">FACULTAD DE CIENCIAS DE LA EDUCACIÓN · MEMORIAS 2024 &amp; REGLAMENTO 1/2026</span>
+        </div>
+        <span id="persistence-status" class="status-banner" role="status" aria-live="polite"></span>
+      </div>
+
+      <h1 class="title">Portal de Memorias de Verificación de Títulos Oficiales y Normativa Académica — ULPGC</h1>
+      <p class="standfirst">
+        Explorador técnico para estudiantado y profesorado sobre estructura curricular de Grados y Másteres en Educación, evaluación compensatoria (Reglamento 1/2026 e Instrucción 2026), horas de Prácticum, acceso desde CFGS y atribución docente (RD 1834/2008).
+      </p>
+
+      <div class="top-nav-row">
+        <nav class="anchor-links" aria-label="Navegación por secciones">
+          <a class="anchor-link" href="#sec-catalogo">01 · Menciones y Especialidades</a>
+          <a class="anchor-link" href="#sec-compensacion">02 · Simulador Compensación 1/2026</a>
+          <a class="anchor-link" href="#sec-practicum">03 · Prácticum y Horas en Centros</a>
+          <a class="anchor-link" href="#sec-acceso">04 · Acceso, CFGS y RD 1834/2008</a>
+        </nav>
+        <div class="header-actions">
+          <button type="button" class="btn btn-secondary" id="btn-export-csv" onclick="exportPortalCSV()">
+            <i data-lucide="download" aria-hidden="true" style="width:16px;height:16px;"></i>
+            Exportar resumen CSV
+          </button>
+          <button type="button" class="btn btn-secondary" id="btn-reset-all" onclick="handleResetAll(this)">
+            <i data-lucide="rotate-ccw" aria-hidden="true" style="width:16px;height:16px;"></i>
+            Restablecer vista
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- KPI SUMMARY CARDS -->
+    <section aria-label="Indicadores clave de las titulaciones">
+      <div class="kpi-grid">
+        <article class="figure-card">
+          <span class="figure-label">Títulos oficiales analizados</span>
+          <div class="figure-value">3 Grados · 2 Másteres</div>
+          <p class="figure-note">Infantil, Primaria, Ed. Social (240 ECTS) y MUFP, MUIMF (60 ECTS interuniversitarios ULL/ULPGC).</p>
+        </article>
+        <article class="figure-card">
+          <span class="figure-label">Menciones de Grado exactas</span>
+          <div class="figure-value">8 · 4 · 0</div>
+          <p class="figure-note">8 en Primaria (24 ECTS), 4 en Infantil (30 ECTS) y 0 en Educación Social (24 ECTS optativos libres).</p>
+        </article>
+        <article class="figure-card">
+          <span class="figure-label">Umbral Compensación 1/2026</span>
+          <div class="figure-value">75% · ≥ 3,00 · 6,00</div>
+          <p class="figure-note">75% de créditos superados, nota mínima 3,00 en ≥3 convocatorias y media ≥6,00 (excluye TFG, TFM y Prácticum).</p>
+        </article>
+        <article class="figure-card">
+          <span class="figure-label">Inmersión en Centros</span>
+          <div class="figure-value">1.100 h / 190 h</div>
+          <p class="figure-note">44 ECTS en Infantil (300 + 425 + 375 h) frente a 190 h presenciales directas de aula en el Prácticum MUFP.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- SECCIÓN 01: CATÁLOGO DE MENCIONES Y ESPECIALIDADES -->
+    <section id="sec-catalogo">
+      <div class="dossier-bar">
+        <div class="dossier-bar-left">
+          <span class="index-num">01</span>
+          <span class="dossier-pill">ESTRUCTURA CURRICULAR</span>
+          <span class="dossier-meta">MEMORIAS MODIFICADAS 2024 · ULL / ULPGC</span>
+        </div>
+      </div>
+      <h2 class="section-title">Catálogo riguroso de menciones de Grado y especialidades de Máster</h2>
+      <p class="prose" style="margin-top: var(--space-xs); color: var(--on-surface-variant);">
+        Distinción normativa entre la figura de <strong>Mención</strong> en los títulos de Grado (excluyendo expresamente a Educación Social, que carece de menciones) y la figura de <strong>Especialidad</strong> en los Másteres Universitarios oficiales.
+      </p>
+
+      <!-- Filtros interactivos -->
+      <div class="filter-toolbar" style="margin-top: var(--space-md);">
+        <div class="field-group">
+          <label class="field-label" for="catalog-search">Buscar mención, especialidad o asignatura optativa</label>
+          <input type="text" id="catalog-search" class="input-control" placeholder="Ej.: Contenidos Canarios, Inclusiva, Familia y Menores, Inglés…" oninput="onCatalogSearchChange(this.value)">
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="catalog-level-filter">Nivel y figura normativa</label>
+          <select id="catalog-level-filter" class="select-control" onchange="onCatalogLevelChange(this.value)">
+            <option value="all">Todos los títulos (5)</option>
+            <option value="grado-mencion">Grados con mención oficial (Primaria e Infantil)</option>
+            <option value="grado-sin-mencion">Grados sin mención (Educación Social)</option>
+            <option value="master-especialidad">Másteres con Especialidad (MUFP y MUIMF)</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="catalog-modality-filter">Modalidad / Restricción</label>
+          <select id="catalog-modality-filter" class="select-control" onchange="onCatalogModalityChange(this.value)">
+            <option value="all">Todas las modalidades</option>
+            <option value="presencial-only">Solo menciones exclusivas presenciales</option>
+            <option value="teleformacion-ok">Compatibles o sin restricción presencial</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="chip-row" role="group" aria-label="Filtro rápido por titulación">
+        <button type="button" class="filter-chip is-active" data-degree="all" onclick="setDegreeFilter('all')">Todas (5)</button>
+        <button type="button" class="filter-chip" data-degree="primaria" onclick="setDegreeFilter('primaria')">Grado Ed. Primaria (8 menciones)</button>
+        <button type="button" class="filter-chip" data-degree="infantil" onclick="setDegreeFilter('infantil')">Grado Ed. Infantil (4 menciones)</button>
+        <button type="button" class="filter-chip" data-degree="social" onclick="setDegreeFilter('social')">Grado Ed. Social (0 menciones)</button>
+        <button type="button" class="filter-chip" data-degree="mufp" onclick="setDegreeFilter('mufp')">MUFP (Especialidades)</button>
+        <button type="button" class="filter-chip" data-degree="muimf" onclick="setDegreeFilter('muimf')">MUIMF (2 especialidades)</button>
+      </div>
+
+      <!-- Gráfico comparativo ECTS + Nota de rigor -->
+      <div class="catalog-layout" style="margin-top: var(--space-lg);">
+        <div class="chart-card">
+          <div>
+            <h3 class="card-title">Distribución oficial de créditos ECTS por bloque formativo</h3>
+            <p style="font-size: 0.875rem; color: var(--on-surface-variant);">Comparativa entre Grados (240 ECTS) y Másteres oficiales (60 ECTS) según Memorias de Verificación.</p>
+          </div>
+          <div class="chart-box" style="min-height: 300px;">
+            <canvas id="ectsChart" aria-label="Gráfico de distribución de créditos ECTS"></canvas>
+          </div>
+        </div>
+
+        <aside class="aside-box">
+          <span class="tag tag-gold">ACLARACIÓN NORMATIVA CLAVE</span>
+          <h3 class="card-title">Menciones vs. Optatividad Libre vs. Especialidades</h3>
+          <p><strong>1. Grado en Educación Social:</strong> En la Memoria Modificada 2024 figura literalmente <em>«No existen datos»</em> en el apartado de menciones. Sus <strong>24 ECTS optativos</strong> permiten cursar libremente materias de cooperación, ámbito judicial, personas mayores, educación afectivo-sexual o educación ambiental, pero <strong>no confieren mención</strong> en el título.</p>
+          <p><strong>2. Contenidos Canarios (Primaria):</strong> Es la única mención restringida expresamente a la <strong>modalidad presencial</strong>; queda excluida de la modalidad de teleformación.</p>
+          <p><strong>3. Posgrado (MUFP y MUIMF):</strong> La legislación universitaria de posgrado no utiliza menciones sino <strong>Especialidades</strong> (24 ECTS optativos en el MUFP; 2 itinerarios de especialidad en el MUIMF).</p>
+        </aside>
+      </div>
+
+      <!-- Tarjetas dinámicas del catálogo -->
+      <div id="degree-cards-container" class="degree-cards-grid"></div>
+    </section>
+
+    <!-- SECCIÓN 02: SIMULADOR DE EVALUACIÓN COMPENSATORIA (REGLAMENTO 1/2026) -->
+    <section id="sec-compensacion">
+      <div class="dossier-bar">
+        <div class="dossier-bar-left">
+          <span class="index-num">02</span>
+          <span class="dossier-pill">REGLAMENTO 1/2026 · BOULPGC 3 JULIO 2026</span>
+          <span class="dossier-meta">EVALUACIÓN POR COMPENSACIÓN CURRICULAR &amp; INSTRUCCIÓN 2026</span>
+        </div>
+      </div>
+      <h2 class="section-title">Simulador de compensabilidad y exclusiones legales absolutas</h2>
+      <p class="prose" style="margin-top: var(--space-xs); color: var(--on-surface-variant);">
+        Verifique si una asignatura cumple los requisitos objetivos del <strong>Reglamento 1/2026</strong> (aprobado por Consejo de Gobierno de 23 de junio de 2026), los supuestos excepcionales de 6.ª/7.ª convocatoria y el régimen de exclusiones de la Instrucción a Centros 2026.
+      </p>
+
+      <div class="simulator-grid" style="margin-top: var(--space-lg);">
+        <!-- Controles del simulador -->
+        <div class="sim-panel">
+          <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:var(--space-sm);">
+            <h3 class="card-title">Parámetros del expediente y la asignatura</h3>
+            <span class="tag tag-petrol">Art. 1, 4 y 5</span>
+          </div>
+
+          <div>
+            <span class="field-label" style="display:block; margin-bottom:var(--space-xs);">Cargar escenario de referencia</span>
+            <div class="preset-row">
+              <button type="button" class="btn btn-secondary" onclick="applySimPreset('viable_grado')">Grado viable (Art. 4)</button>
+              <button type="button" class="btn btn-secondary" onclick="applySimPreset('exclusion_tfg')">Exclusión TFG / Prácticum</button>
+              <button type="button" class="btn btn-secondary" onclick="applySimPreset('excepcional_7a')">Vía excepcional 7.ª conv. (Art. 5)</button>
+            </div>
+          </div>
+
+          <div class="sim-row-2">
+            <div class="field-group">
+              <label class="field-label" for="sim-study-type">Titulación / Colectivo (Art. 1)</label>
+              <select id="sim-study-type" class="select-control" onchange="onSimInputChange()">
+                <option value="grado">Grado Oficial ULPGC (240 ECTS)</option>
+                <option value="doble">Doble Titulación de Grado (300+ ECTS)</option>
+                <option value="master">Máster Oficial (MUFP / MUIMF)</option>
+                <option value="movilidad">Movilidad entrante / Homologación / Título propio</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="sim-subject-type">Naturaleza de la materia</label>
+              <select id="sim-subject-type" class="select-control" onchange="onSimInputChange()">
+                <option value="ordinaria">Asignatura ordinaria (Básica / Oblig. / Opt.)</option>
+                <option value="tfg">Trabajo Fin de Grado / Máster (TFG / TFM)</option>
+                <option value="practicum">Prácticum / Prácticas Académicas Externas</option>
+                <option value="inventario">Incluida en Inventario No Compensable (Junta Facultad)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="sim-row-2">
+            <div class="field-group">
+              <label class="field-label" for="sim-total-credits-num">Créditos totales del plan (ECTS)</label>
+              <div class="slider-pair">
+                <input type="range" id="sim-total-credits-range" min="60" max="380" step="6" value="240" oninput="syncTotalCreditsFromSlider(this.value)">
+                <input type="number" id="sim-total-credits-num" class="input-control" min="60" max="420" step="1" value="240" oninput="syncTotalCreditsFromNumber(this.value)">
+              </div>
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="sim-passed-credits-num">Créditos superados (ECTS)</label>
+              <div class="slider-pair">
+                <input type="range" id="sim-passed-credits-range" min="0" max="380" step="1" value="192" oninput="syncPassedCreditsFromSlider(this.value)">
+                <input type="number" id="sim-passed-credits-num" class="input-control" min="0" max="420" step="0.5" value="192" oninput="syncPassedCreditsFromNumber(this.value)">
+              </div>
+            </div>
+          </div>
+
+          <div class="sim-row-2">
+            <div class="field-group">
+              <label class="field-label" for="sim-enrolled">Matriculado en la asignatura este curso</label>
+              <select id="sim-enrolled" class="select-control" onchange="onSimInputChange()">
+                <option value="yes">Sí, matriculado en curso actual</option>
+                <option value="no">No matriculado en el curso</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="sim-pathway">Vía reglamentaria aplicable</label>
+              <select id="sim-pathway" class="select-control" onchange="onSimInputChange()">
+                <option value="ordinaria">Procedimiento ordinario (Art. 4)</option>
+                <option value="excepcional">Caso excepcional: 7.ª agotada o 6.ª denegada (Art. 5)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="sim-row-2">
+            <div class="field-group">
+              <label class="field-label" for="sim-attempts">Convocatorias presentadas en la asignatura</label>
+              <input type="number" id="sim-attempts" class="input-control" min="0" max="8" step="1" value="3" oninput="onSimInputChange()">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="sim-best-grade">Mejor nota en la asignatura (0,00–4,99)</label>
+              <input type="number" id="sim-best-grade" class="input-control" min="0" max="4.99" step="0.05" value="3.45" oninput="onSimInputChange()">
+            </div>
+          </div>
+
+          <div class="sim-row-2">
+            <div class="field-group">
+              <label class="field-label" for="sim-gpa">Nota media del expediente (RD 1125/2003)</label>
+              <input type="number" id="sim-gpa" class="input-control" min="5.0" max="10.0" step="0.05" value="6.45" oninput="onSimInputChange()">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="sim-two-ge2">Convocatorias con nota ≥ 2,00 (Art. 5)</label>
+              <input type="number" id="sim-two-ge2" class="input-control" min="0" max="7" step="1" value="2" oninput="onSimInputChange()">
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="sim-remaining-ects">Créditos pendientes para finalizar sin Prácticum ni TFG (Art. 5)</label>
+            <input type="number" id="sim-remaining-ects" class="input-control" min="0" max="180" step="1" value="18" oninput="onSimInputChange()">
+          </div>
+        </div>
+
+        <!-- Resultado y desglose -->
+        <div style="display:flex; flex-direction:column; gap:var(--space-md);">
+          <div id="sim-verdict-box" class="verdict-banner">
+            <div id="sim-verdict-title" class="verdict-title">Evaluando requisitos…</div>
+            <p id="sim-verdict-summary"></p>
+            <div id="sim-verdict-tags" style="display:flex; flex-wrap:wrap; gap:var(--space-sm); margin-top:var(--space-xs);"></div>
+          </div>
+
+          <div class="figure-card">
+            <h3 class="card-title" style="margin-bottom:var(--space-sm);">Comprobación artículo por artículo</h3>
+            <table class="checklist-table">
+              <thead>
+                <tr>
+                  <th>Requisito normativo</th>
+                  <th>Valor actual</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody id="sim-checklist-body"></tbody>
+            </table>
+          </div>
+
+          <aside class="aside-box">
+            <span class="tag tag-amber">PLAZOS Y PROCEDIMIENTO (ARTS. 6–8)</span>
+            <p><strong>Sede Electrónica ULPGC:</strong> Plazo de solicitud <strong>abierto durante todo el curso académico</strong>.</p>
+            <p><strong>Resolución en 1.ª instancia:</strong> Decanato / Dirección del Centro (previa revisión administrativa y límites de Centro / Tribunal de Compensación) en un plazo máximo de <strong>1 mes</strong>.</p>
+            <p><strong>Recurso de alzada:</strong> Ante el Rector o Vicerrector delegado en el plazo de <strong>1 mes</strong> desde la notificación expresa (agota la vía administrativa).</p>
+            <p><strong>Efecto en expediente:</strong> Calificación de <strong>«Compensada - 5»</strong> (5,00 puntos en media) y leyenda «COMPENSADA» con fecha de resolución favorable.</p>
+          </aside>
+        </div>
+      </div>
+
+      <!-- Exclusiones legales e Instrucción a Centros 2026 -->
+      <div class="two-col" style="margin-top: var(--space-lg);">
+        <article class="figure-card">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:var(--space-sm);">
+            <h3 class="card-title">Catálogo de exclusiones legales absolutas</h3>
+            <span class="tag tag-error">NO COMPENSABLES</span>
+          </div>
+          <ul class="mentions-list" style="margin-top:var(--space-sm);">
+            <li class="mentions-item">
+              <span><strong>Trabajo Fin de Grado (TFG)</strong> — 6 ECTS en Infantil, Primaria y Ed. Social</span>
+              <span class="tag tag-error">Excluido</span>
+            </li>
+            <li class="mentions-item">
+              <span><strong>Trabajo Fin de Máster (TFM)</strong> — 6 ECTS en MUFP y MUIMF</span>
+              <span class="tag tag-error">Excluido</span>
+            </li>
+            <li class="mentions-item">
+              <span><strong>Prácticum y Prácticas Externas</strong> — 44 ECTS (Infantil/Primaria), 15 ECTS (MUFP)</span>
+              <span class="tag tag-error">Excluido</span>
+            </li>
+            <li class="mentions-item">
+              <span><strong>Másteres Oficiales y Títulos Propios</strong> — Art. 1.2 Reglamento 1/2026</span>
+              <span class="tag tag-error">Fuera de ámbito</span>
+            </li>
+            <li class="mentions-item">
+              <span><strong>Movilidad entrante y homologación</strong> — Pruebas o complementos formativos</span>
+              <span class="tag tag-error">Fuera de ámbito</span>
+            </li>
+          </ul>
+        </article>
+
+        <article class="figure-card">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:var(--space-sm);">
+            <h3 class="card-title">Instrucción del Vicerrectorado de Estudiantes a Centros (2026)</h3>
+            <span class="tag tag-gold">ACTUALIZACIÓN OBLIGATORIA</span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:var(--space-sm); margin-top:var(--space-sm);">
+            <div class="alert-box is-warning">
+              <strong>Caducidad de exenciones anteriores:</strong> Con la entrada en vigor del Reglamento 1/2026 (convocatoria ordinaria del curso siguiente a su publicación en el BOULPGC de 3 de julio de 2026), quedan sin efecto las listas previas de materias exentas de compensación aprobadas bajo normativas anteriores.
+            </div>
+            <p><strong>Nuevos inventarios por Junta de Facultad:</strong> Cada Centro debe formalizar y aprobar expresamente en <strong>Junta de Facultad o Escuela</strong> el nuevo inventario motivado de materias no compensables (por su carácter práctico-clínico o competencias nucleares insustituibles) conforme a los límites del art. 3 y la Instrucción 2026.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- SECCIÓN 03: MÓDULO DE PRÁCTICUM Y HORAS EN CENTROS -->
+    <section id="sec-practicum">
+      <div class="dossier-bar">
+        <div class="dossier-bar-left">
+          <span class="index-num">03</span>
+          <span class="dossier-pill">INMERSIÓN PROFESIONAL</span>
+          <span class="dossier-meta">PRÁCTICUM Y TALLER DE HABILIDADES DOCENTES</span>
+        </div>
+      </div>
+      <h2 class="section-title">Módulo de Prácticum y desglose exacto de horas en centros</h2>
+      <p class="prose" style="margin-top: var(--space-xs); color: var(--on-surface-variant);">
+        Detalle de créditos ECTS y horas reales de dedicación en Infantil (44 ECTS / 1.100 h) y en el MUFP (15 ECTS: 12 ECTS de Prácticum en centro con 190 h de estancia directa + 3 ECTS de Taller de Habilidades Docentes).
+      </p>
+
+      <div class="practicum-grid" style="margin-top: var(--space-lg);">
+        <!-- Desglose interactivo de horas -->
+        <div style="display:flex; flex-direction:column; gap:var(--space-md);">
+          <div class="figure-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:var(--space-sm);">
+              <h3 class="card-title">Grado en Educación Infantil — 44 ECTS (1.100 h totales)</h3>
+              <span class="tag tag-petrol">25 h / ECTS</span>
+            </div>
+            <div class="hour-bar-track" aria-label="Proporción Prácticum I, II y III en Infantil">
+              <div class="hour-seg-1" style="width: 27.27%;" title="Prácticum I: 12 ECTS (300 h)"></div>
+              <div class="hour-seg-2" style="width: 38.64%;" title="Prácticum II: 17 ECTS (425 h)"></div>
+              <div class="hour-seg-3" style="width: 34.09%;" title="Prácticum III: 15 ECTS (375 h)"></div>
+            </div>
+            <table class="checklist-table">
+              <thead>
+                <tr>
+                  <th>Módulo / Asignatura</th>
+                  <th class="num-cell">ECTS</th>
+                  <th class="num-cell">Horas totales</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Prácticum I</strong> (Inmersión inicial en centro infantil)</td>
+                  <td class="num-cell">12</td>
+                  <td class="num-cell">300 h</td>
+                </tr>
+                <tr>
+                  <td><strong>Prácticum II</strong> (Intervención didáctica en aula)</td>
+                  <td class="num-cell">17</td>
+                  <td class="num-cell">425 h</td>
+                </tr>
+                <tr>
+                  <td><strong>Prácticum III</strong> (Autonomía docente y mención)</td>
+                  <td class="num-cell">15</td>
+                  <td class="num-cell">375 h</td>
+                </tr>
+                <tr>
+                  <td><strong>Total Prácticas Externas (Infantil)</strong></td>
+                  <td class="num-cell"><strong>44</strong></td>
+                  <td class="num-cell"><strong>1.100 h</strong></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="figure-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:var(--space-sm);">
+              <h3 class="card-title">MUFP — Módulo Prácticas Externas: 15 ECTS (375 h totales)</h3>
+              <span class="tag tag-gold">12 + 3 ECTS</span>
+            </div>
+            <p style="font-size:0.9rem; color:var(--on-surface-variant);">
+              Desglose exacto del Prácticum en Centro Educativo (Secundaria / Bachillerato / FP / EOI) y Taller de Habilidades Docentes:
+            </p>
+            <div class="hour-bar-track" aria-label="Proporción 190h estancia directa, 100h autónomo, 10h tutoría y 75h taller">
+              <div class="hour-seg-1" style="width: 50.67%;" title="Estancia presencial directa: 190 h"></div>
+              <div class="hour-seg-2" style="width: 26.67%;" title="Trabajo autónomo Prácticum: 100 h"></div>
+              <div class="hour-seg-3" style="width: 2.66%;" title="Tutoría y evaluación: 10 h"></div>
+            </div>
+            <table class="checklist-table">
+              <thead>
+                <tr>
+                  <th>Componente del módulo MUFP</th>
+                  <th class="num-cell">ECTS</th>
+                  <th class="num-cell">Horas</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Estancia presencial directa en centro</strong> (Secundaria / FP / EOI)</td>
+                  <td class="num-cell" rowspan="3" style="vertical-align:middle;">12</td>
+                  <td class="num-cell"><strong>190 h</strong></td>
+                </tr>
+                <tr>
+                  <td><strong>Trabajo autónomo del estudiante</strong> (diario, memoria, unidades)</td>
+                  <td class="num-cell">100 h</td>
+                </tr>
+                <tr>
+                  <td><strong>Tutorías presenciales y evaluación universitaria</strong></td>
+                  <td class="num-cell">10 h</td>
+                </tr>
+                <tr>
+                  <td><strong>Taller de Habilidades Docentes</strong> (formación práctica transversal)</td>
+                  <td class="num-cell">3</td>
+                  <td class="num-cell">75 h</td>
+                </tr>
+                <tr>
+                  <td><strong>Total Módulo Prácticum MUFP</strong></td>
+                  <td class="num-cell"><strong>15</strong></td>
+                  <td class="num-cell"><strong>375 h</strong></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Gráfico de comparación de horas -->
+        <div class="chart-card">
+          <div>
+            <h3 class="card-title">Comparativa de carga horaria de Prácticas Externas</h3>
+            <p style="font-size:0.875rem; color:var(--on-surface-variant);">Desglose por componente horario entre Educación Infantil (Prácticum I–III) y MUFP (12 ECTS centro + 3 ECTS Taller).</p>
+          </div>
+          <div class="chart-box" style="min-height: 360px;">
+            <canvas id="practicumChart" aria-label="Gráfico comparativo de horas de Prácticum"></canvas>
+          </div>
+          <div class="alert-box">
+            <strong>Grado en Educación Primaria y Educación Social:</strong> Primaria cuenta con <strong>44 ECTS</strong> de Prácticas Externas (1.100 h, articuladas en Prácticum I y II en la adaptación desde Maestro). En Educación Social, el Practicum obligatorio (20 ECTS en la tabla de adaptación de Diplomatura) es también materia no compensable por el Art. 5 del Reglamento 1/2026.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECCIÓN 04: ACCESO, IDIOMAS, RECONOCIMIENTO CFGS Y RD 1834/2008 -->
+    <section id="sec-acceso">
+      <div class="dossier-bar">
+        <div class="dossier-bar-left">
+          <span class="index-num">04</span>
+          <span class="dossier-pill">ACCESO Y HABILITACIÓN</span>
+          <span class="dossier-meta">PERFILES DE INGRESO · B1/C1 · TABLAS CFGS · RD 1834/2008</span>
+        </div>
+      </div>
+      <h2 class="section-title">Perfiles de ingreso, idiomas, reconocimiento desde CFGS y atribución docente</h2>
+
+      <!-- Perfiles de ingreso e Idiomas -->
+      <div class="two-col" style="margin-top: var(--space-lg);">
+        <article class="figure-card">
+          <h3 class="card-title">Perfiles de ingreso idóneos en Grados y Adaptación</h3>
+          <ul class="mentions-list" style="margin-top:var(--space-sm);">
+            <li class="mentions-item" style="flex-direction:column; align-items:flex-start;">
+              <strong>Grado en Educación Infantil (0–6 años)</strong>
+              <span style="color:var(--on-surface-variant);">Vocación por el desarrollo temprano, capacidades comunicativas y expresivas, creatividad, observación sistemática y trabajo cooperativo. Dispone de Curso de Adaptación (60 ECTS) para Diplomados en Maestro-Educación Infantil (vía general o mención Inglés).</span>
+            </li>
+            <li class="mentions-item" style="flex-direction:column; align-items:flex-start;">
+              <strong>Grado en Educación Primaria (6–12 años)</strong>
+              <span style="color:var(--on-surface-variant);">Base equilibrada en lengua, matemáticas, ciencias experimentales, sociales y expresión artística; compromiso inclusivo. Curso de Adaptación (60 ECTS) para Diplomados de Maestro en sus distintas especialidades y menciones.</span>
+            </li>
+            <li class="mentions-item" style="flex-direction:column; align-items:flex-start;">
+              <strong>Grado en Educación Social</strong>
+              <span style="color:var(--on-surface-variant);">Orientación a la intervención socioeducativa, mediación comunitaria, habilidades sociales y atención a colectivos vulnerables. Amplia pasarela de reconocimiento directo desde CFGS de la familia de Servicios Socioculturales.</span>
+            </li>
+          </ul>
+        </article>
+
+        <article class="figure-card">
+          <h3 class="card-title">Requisitos lingüísticos oficiales en Posgrado (MCERL)</h3>
+          <table class="checklist-table" style="margin-top:var(--space-sm);">
+            <thead>
+              <tr>
+                <th>Titulación / Especialidad</th>
+                <th>Nivel exigido</th>
+                <th>Alcance y lenguas</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>MUFP — Acceso general</strong> (todas las especialidades salvo idiomas)</td>
+                <td><span class="tag tag-petrol">Nivel B1</span></td>
+                <td>Acreditación de lengua extranjera conforme al MCERL como requisito de acceso al Máster.</td>
+              </tr>
+              <tr>
+                <td><strong>MUFP — Especialidad Lenguas Extranjeras (Inglés)</strong></td>
+                <td><span class="tag tag-gold">Nivel C1</span></td>
+                <td>Exigencia específica de competencia avanzada para docencia en ESO, Bachillerato y EOI.</td>
+              </tr>
+              <tr>
+                <td><strong>MUIMF — Intervención y Mediación Familiar, Social y Comunitaria</strong></td>
+                <td><span class="tag tag-petrol">Nivel B1</span></td>
+                <td>Requisito de acceso B1 de idioma extranjero; docencia oficial en Castellano e Inglés.</td>
+              </tr>
+            </tbody>
+          </table>
+        </article>
+      </div>
+
+      <!-- Tabla interactiva de Reconocimiento CFGS -> Educación Social -->
+      <div style="margin-top: var(--space-xl);">
+        <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:end; gap:var(--space-md); margin-bottom:var(--space-md);">
+          <div>
+            <h3 class="card-title">Reconocimiento directo desde CFGS al Grado en Educación Social</h3>
+            <p style="font-size:0.9rem; color:var(--on-surface-variant);">Tabla de equivalencias directas según Memoria Modificada Social 2024 (títulos cerrados y abiertos LOE/LOGSE).</p>
+          </div>
+          <div class="field-group" style="min-width:260px;">
+            <label class="field-label" for="cfgs-filter">Filtrar por Ciclo Formativo (CFGS)</label>
+            <select id="cfgs-filter" class="select-control" onchange="renderCfgsTable(this.value)">
+              <option value="all">Todos los CFGS (Integración Social, Animación, Infantil)</option>
+              <option value="integracion">CFGS Integración Social (hasta 36 ECTS)</option>
+              <option value="animacion">CFGS Animación Sociocultural (18 ECTS)</option>
+              <option value="infantil">CFGS Educación Infantil (6 ECTS)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th onclick="sortCfgsTable('cycle')">Ciclo Formativo (CFGS)</th>
+                <th class="num-col" onclick="sortCfgsTable('maxEcts')">Reconocimiento máx.</th>
+                <th onclick="sortCfgsTable('module')">Módulo formativo asociado (LOE / LOGSE)</th>
+                <th onclick="sortCfgsTable('subject')">Asignatura reconocida en Ed. Social</th>
+                <th class="num-col" onclick="sortCfgsTable('ects')">ECTS</th>
+                <th>Carácter</th>
+              </tr>
+            </thead>
+            <tbody id="cfgs-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Explorador RD 1834/2008 y Atribución Docente del MUFP -->
+      <div style="margin-top: var(--space-xl);">
+        <div class="figure-card">
+          <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:var(--space-md);">
+            <div>
+              <span class="tag tag-amber">BOE-A-2008-19174 · LEGISLACIÓN CONSOLIDADA</span>
+              <h3 class="card-title" style="margin-top:var(--space-xs);">Marco legal de atribución docente: Real Decreto 1834/2008 y especialidades del MUFP</h3>
+            </div>
+            <div class="field-group" style="min-width:280px;">
+              <label class="field-label" for="rd-specialty-select">Seleccionar especialidad del MUFP</label>
+              <select id="rd-specialty-select" class="select-control" onchange="renderRd1834Card(this.value)">
+                <option value="lengua">Lengua y Literatura (Castellana, Latín y Griego)</option>
+                <option value="ingles">Lenguas Extranjeras: Inglés (ULL / ULPGC)</option>
+                <option value="ciencias">Ciencias Experimentales (Física y Química / Biología)</option>
+                <option value="geografia">Geografía e Historia</option>
+                <option value="economia">Economía, Empresa y Turismo (ULL / ULPGC)</option>
+                <option value="orientacion">Orientación Educativa</option>
+                <option value="fp">Módulos Profesionales (Procesos Industriales, Informática, Sanitario)</option>
+                <option value="artes">Dibujo, Diseño y Artes Plásticas / Música / Ed. Física</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="rd-detail-box" class="alert-box" style="margin-top:var(--space-md);"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FUENTES DOCUMENTALES -->
+    <footer class="sources-footer">
+      <strong style="color:var(--on-surface);">Fuentes documentales del cuaderno (base estricta del portal):</strong>
+      <ol class="sources-list">
+        <li>Memoria Modificada del Grado en Educación Primaria (ULPGC, 2024).</li>
+        <li>Memoria Modificada del Grado en Educación Infantil (ULPGC, 2024).</li>
+        <li>Memoria Modificada del Grado en Educación Social (ULPGC, 2024).</li>
+        <li>Memoria de Verificación aprobada del Máster Universitario en Formación del Profesorado — MUFP (ULL / ULPGC).</li>
+        <li>Memoria de Verificación del Máster Universitario en Intervención y Mediación Familiar, Social y Comunitaria — MUIMF (ULL / ULPGC).</li>
+        <li>Reglamento 1/2026, de Evaluación Compensatoria de Asignaturas para las Titulaciones Oficiales de Grado de la ULPGC (BOULPGC, 3 de julio de 2026).</li>
+        <li>Instrucción del Vicerrectorado de Estudiantes a Centros sobre aplicación del Reglamento de Evaluación Compensatoria (2026).</li>
+        <li>Real Decreto 1834/2008, de 8 de noviembre, sobre condiciones de formación y especialidades docentes en Secundaria, Bachillerato y FP (BOE-A-2008-19174 consolidado).</li>
+      </ol>
+    </footer>
+
+  </div>
+
+  <api-shim></api-shim>
+  <script>
+    // =========================================================================
+    // DATOS VERIFICADOS DE LAS 8 FUENTES
+    // =========================================================================
+    const DEGREES_DATA = [
+      {
+        id: `primaria`,
+        name: `Grado en Educación Primaria`,
+        level: `grado-mencion`,
+        figureType: `Mención`,
+        totalEcts: 240,
+        norm: `Orden ECI/3857/2007 (BOE 29/12/2007) · Memoria Modificada 2024`,
+        center: `Facultad de Ciencias de la Educación (ULPGC · Cód. 026 / Centro 35006114)`,
+        profession: `Maestro en Educación Primaria (Profesión regulada)`,
+        ectsBreakdown: { basica: 60, obligatoria: 100, optativa: 30, practicas: 44, tfg: 6 },
+        optNote: `30 ECTS optativos totales (24 ECTS corresponden a la Mención oficial).`,
+        modalityAlert: `La Mención en Contenidos Canarios es exclusiva de la modalidad presencial (excluida en teleformación).`,
+        items: [
+          { name: `Mención en Educación Inclusiva`, credits: `24 ECTS`, modality: `teleformacion-ok`, note: `Presencial / Teleformación` },
+          { name: `Mención en Educación Física`, credits: `24 ECTS`, modality: `teleformacion-ok`, note: `Especialidad docente EF` },
+          { name: `Mención en Educación Musical`, credits: `24 ECTS`, modality: `teleformacion-ok`, note: `Especialidad docente Música` },
+          { name: `Mención en Segundas Lenguas: Inglés`, credits: `24 ECTS`, modality: `teleformacion-ok`, note: `Lengua extranjera` },
+          { name: `Mención en Segundas Lenguas: Francés`, credits: `24 ECTS`, modality: `teleformacion-ok`, note: `Lengua extranjera` },
+          { name: `Mención en Segundas Lenguas: Alemán`, credits: `24 ECTS`, modality: `teleformacion-ok`, note: `Lengua extranjera` },
+          { name: `Mención en Contenidos Canarios`, credits: `24 ECTS`, modality: `presencial-only`, note: `Solo presencial · Excluida en teleformación`, highlight: true },
+          { name: `Mención en Educación Emocional y Social`, credits: `24 ECTS`, modality: `teleformacion-ok`, note: `Competencia socioemocional` }
+        ]
+      },
+      {
+        id: `infantil`,
+        name: `Grado en Educación Infantil`,
+        level: `grado-mencion`,
+        figureType: `Mención`,
+        totalEcts: 240,
+        norm: `Orden ECI/3854/2007 (BOE 29/12/2007) · Memoria Modificada 2024`,
+        center: `Facultad de Ciencias de la Educación (ULPGC · Cód. 026)`,
+        profession: `Maestro en Educación Infantil (Profesión regulada)`,
+        ectsBreakdown: { basica: 100, obligatoria: 60, optativa: 30, practicas: 44, tfg: 6 },
+        optNote: `30 ECTS optativos totales dedicados íntegramente a la Mención oficial (30 ECTS).`,
+        modalityAlert: ``,
+        items: [
+          { name: `Mención en Segunda Lengua: Inglés`, credits: `30 ECTS`, modality: `teleformacion-ok`, note: `Incluye B2 educativo y fonética` },
+          { name: `Mención en Expresión y Desarrollo de la Creatividad`, credits: `30 ECTS`, modality: `teleformacion-ok`, note: `Lenguajes artísticos y lúdicos` },
+          { name: `Mención en Educación Inclusiva`, credits: `30 ECTS`, modality: `teleformacion-ok`, note: `Atención temprana a la diversidad` },
+          { name: `Mención en Educación Emocional y Social`, credits: `30 ECTS`, modality: `teleformacion-ok`, note: `Bienestar infantil y convivencia` }
+        ]
+      },
+      {
+        id: `social`,
+        name: `Grado en Educación Social`,
+        level: `grado-sin-mencion`,
+        figureType: `Sin mención`,
+        totalEcts: 240,
+        norm: `Memoria Modificada Educación Social 2024 (ULPGC)`,
+        center: `Facultad de Ciencias de la Educación (ULPGC · Cód. 35006114)`,
+        profession: `Educador/a Social (Sin menciones en Memoria oficial)`,
+        ectsBreakdown: { basica: 60, obligatoria: 130, optativa: 24, practicas: 20, tfg: 6 },
+        optNote: `NO TIENE MENCIONES («No existen datos» en la Memoria). Ofrece 24 ECTS optativos de libre elección curricular.`,
+        modalityAlert: `Atención: Este grado no expide mención en el título. Los 24 ECTS optativos (y hasta 6 ECTS por actividades culturales, deportivas, solidarias o prácticas FUE) son optatividad abierta.`,
+        items: [
+          { name: `Educación social en la cooperación internacional para el desarrollo y solidaridad`, credits: `6 ECTS`, modality: `teleformacion-ok`, note: `Optativa libre` },
+          { name: `Educación afectivo-sexual`, credits: `6 ECTS`, modality: `teleformacion-ok`, note: `Optativa libre` },
+          { name: `Intervención socioeducativa en el ámbito judicial`, credits: `6 ECTS`, modality: `teleformacion-ok`, note: `Optativa libre` },
+          { name: `Intervención socioeducativa con mayores`, credits: `6 ECTS`, modality: `teleformacion-ok`, note: `Optativa libre` },
+          { name: `Educación ambiental y desarrollo sostenible`, credits: `6 ECTS`, modality: `teleformacion-ok`, note: `Optativa libre` },
+          { name: `Intervención en hábitos saludables y reeducación en adicciones`, credits: `6 ECTS`, modality: `teleformacion-ok`, note: `Optativa libre` },
+          { name: `Diversidad e intervención con personas con discapacidad / Familias en riesgo`, credits: `6 ECTS`, modality: `teleformacion-ok`, note: `Optativa libre` }
+        ]
+      },
+      {
+        id: `mufp`,
+        name: `Máster Univ. en Formación del Profesorado (MUFP)`,
+        level: `master-especialidad`,
+        figureType: `Especialidad`,
+        totalEcts: 60,
+        norm: `Memoria Verificación Aprobada M577 · RD 1834/2008`,
+        center: `Interuniversitario ULL / ULPGC`,
+        profession: `Profesor de ESO, Bachillerato, FP y Enseñanzas de Idiomas (Profesión regulada)`,
+        ectsBreakdown: { basica: 0, obligatoria: 15, optativa: 24, practicas: 15, tfg: 6 },
+        optNote: `60 ECTS totales · 24 ECTS optativos por Especialidad (la figura normativa en Máster es Especialidad, no mención).`,
+        modalityAlert: `Requisito lingüístico de acceso: B1 general (C1 para la especialidad de Lenguas Extranjeras / Inglés).`,
+        items: [
+          { name: `Especialidad en Orientación Educativa`, credits: `24 ECTS`, modality: `teleformacion-ok`, note: `Atención psicopedagógica` },
+          { name: `Especialidad en Lengua y Literatura (Castellana, Latín y Griego)`, credits: `24 ECTS`, modality: `teleformacion-ok`, note: `Sede ULL / ámbito lingüístico` },
+          { name: `Especialidad en Ciencias Experimentales (Física y Química / Biología)`, credits: `24 ECTS`, modality: `teleformacion-ok`, note: `Ámbito científico` },
+          { name: `Especialidad en Geografía e Historia`, credits: `24 ECTS`, modality: `teleformacion-ok`, note: `Ciencias Sociales` },
+          { name: `Especialidad en Educación Física / Música / Tecnología`, credits: `24 ECTS`, modality: `teleformacion-ok`, note: `Especialidades específicas` },
+          { name: `Especialidad en Inglés (ULL / ULPGC)`, credits: `24 ECTS`, modality: `teleformacion-ok`, note: `Requiere nivel C1` },
+          { name: `Especialidad en Dibujo, Diseño y Artes Plásticas`, credits: `24 ECTS`, modality: `teleformacion-ok`, note: `Enseñanzas artísticas` },
+          { name: `Especialidad en Economía, Empresa y Turismo (ULL / ULPGC)`, credits: `24 ECTS`, modality: `teleformacion-ok`, note: `Impartición conjunta` },
+          { name: `Especialidad en Módulos Profesionales (Procesos Industriales, Informática, Comunicación y Sanitario)`, credits: `24 ECTS`, modality: `teleformacion-ok`, note: `Formación Profesional` }
+        ]
+      },
+      {
+        id: `muimf`,
+        name: `Máster Univ. en Intervención y Mediación Familiar, Social y Comunitaria (MUIMF)`,
+        level: `master-especialidad`,
+        figureType: `Especialidad`,
+        totalEcts: 60,
+        norm: `Memoria Verificación ANECA · Convenio ULL / ULPGC`,
+        center: `Facultad de Ciencias de la Educación (ULPGC 35006114) y ULL`,
+        profession: `NO habilita ni está vinculado con profesión regulada alguna`,
+        ectsBreakdown: { basica: 0, obligatoria: 30, optativa: 12, practicas: 12, tfg: 6 },
+        optNote: `60 ECTS totales · 2 Especialidades oficiales · Lenguas de impartición: Castellano e Inglés (acceso B1).`,
+        modalityAlert: `No habilita para profesión regulada. Incluye competencias específicas CE1–CE6 en mediación, perspectiva ecológica-sistémica y evaluación de calidad.`,
+        items: [
+          { name: `Especialidad en Familia y Menores`, credits: `Especialidad`, modality: `teleformacion-ok`, note: `Preservación familiar, interés del menor y competencias parentales` },
+          { name: `Especialidad en Bienestar Social y Comunitario`, credits: `Especialidad`, modality: `teleformacion-ok`, note: `Análisis cualitativo, participativo e intervención comunitaria` }
+        ]
+      }
+    ];
+
+    const CFGS_DATA = [
+      {
+        cycle: `CFGS en Integración Social`,
+        maxEcts: 36,
+        maxLabel: `36 ECTS (cerrado) · Hasta 36 LOE / 30 LOGSE`,
+        module: `0337 Contexto de la intervención social (70 h)`,
+        subject: `41806 Estructura y cambio social`,
+        ects: 6,
+        type: `Básica de rama`,
+        key: `integracion`
+      },
+      {
+        cycle: `CFGS en Integración Social`,
+        maxEcts: 36,
+        maxLabel: `36 ECTS (cerrado) · Hasta 36 LOE / 30 LOGSE`,
+        module: `0017 Habilidades sociales (60 h) / Animación y dinámica de grupos`,
+        subject: `41804 Habilidades sociales y de comunicación`,
+        ects: 6,
+        type: `Básica de rama`,
+        key: `integracion`
+      },
+      {
+        cycle: `CFGS en Integración Social`,
+        maxEcts: 36,
+        maxLabel: `36 ECTS (cerrado) · Hasta 36 LOE / 30 LOGSE`,
+        module: `0338 Inserción socio-laboral (115 h) / Inserción ocupacional`,
+        subject: `41819 Orientación y formación laboral`,
+        ects: 6,
+        type: `Obligatoria`,
+        key: `integracion`
+      },
+      {
+        cycle: `CFGS en Integración Social`,
+        maxEcts: 36,
+        maxLabel: `36 ECTS (cerrado) · Hasta 36 LOE / 30 LOGSE`,
+        module: `0340 Mediación comunitaria (80 h) + bloque de reconocimiento CFGS`,
+        subject: `41824 Intervención socioeducativa para la inclusión de personas (y resto hasta 36 ECTS)`,
+        ects: 18,
+        type: `Obligatoria / Reconocimiento título`,
+        key: `integracion`
+      },
+      {
+        cycle: `CFGS en Animación Sociocultural (y Turística)`,
+        maxEcts: 18,
+        maxLabel: `18 ECTS reconocimiento directo`,
+        module: `Módulos formativos socioculturales, dinamización comunitaria y grupos`,
+        subject: `Desarrollo comunitario, Dinámica de grupos y Habilidades sociales (paquete 18 ECTS)`,
+        ects: 18,
+        type: `Básica / Obligatoria`,
+        key: `animacion`
+      },
+      {
+        cycle: `CFGS en Educación Infantil`,
+        maxEcts: 6,
+        maxLabel: `6 ECTS (título cerrado y abierto LOE/LOGSE)`,
+        module: `0017 Habilidades sociales (60 h) / Animación y dinámica de grupos`,
+        subject: `41804 Habilidades sociales y de comunicación`,
+        ects: 6,
+        type: `Básica de rama`,
+        key: `infantil`
+      }
+    ];
+
+    const RD_1834_MAP = {
+      lengua: {
+        title: `Especialidad en Lengua y Literatura (Castellana, Latín y Griego)`,
+        body: `Al amparo del Real Decreto 1834/2008 (BOE-A-2008-19174), la superación de los 24 ECTS de especialidad más los 12 ECTS de Prácticum en centro acredita la formación pedagógica y didáctica para los Cuerpos de Profesores de Enseñanza Secundaria en Lengua Castellana y Literatura, Latín o Griego, vinculada a las titulaciones filológicas/humanísticas de acceso recogidas en los anexos del RD.`
+      },
+      ingles: {
+        title: `Especialidad en Lenguas Extranjeras: Inglés (ULL / ULPGC)`,
+        body: `Conforme al RD 1834/2008, habilita para la docencia de Inglés en ESO, Bachillerato, Formación Profesional y Escuelas Oficiales de Idiomas (EOI). Requiere acreditación lingüística de nivel C1 del MCERL además de la titulación universitaria habilitante y la superación del módulo de 24 ECTS de especialidad y 15 ECTS de módulo práctico.`
+      },
+      ciencias: {
+        title: `Especialidad en Ciencias Experimentales (Física y Química / Biología y Geología)`,
+        body: `Atribuye formación docente para las especialidades de Física y Química y Biología y Geología de Educación Secundaria Obligatoria y Bachillerato según el RD 1834/2008. La asignación concreta de materias en centros se rige por el perfil de Grado/Licenciatura previo del aspirante junto con la especialidad cursada en el MUFP.`
+      },
+      geografia: {
+        title: `Especialidad en Geografía e Historia`,
+        body: `Vinculada directamente a la especialidad docente de Geografía e Historia del Cuerpo de Profesores de Enseñanza Secundaria (RD 1834/2008). Incluye la capacitación didáctica para Historia, Geografía, Historia del Arte y materias afines en ESO y Bachillerato.`
+      },
+      economia: {
+        title: `Especialidad en Economía, Empresa y Turismo (ULL / ULPGC)`,
+        body: `Especialidad interuniversitaria ULL/ULPGC orientada tanto a la especialidad de Economía en ESO/Bachillerato como a las familias profesionales de Administración y Gestión, Comercio y Marketing, y Hostelería y Turismo en Formación Profesional, en los términos de los anexos del RD 1834/2008.`
+      },
+      orientacion: {
+        title: `Especialidad en Orientación Educativa`,
+        body: `Habilita la dimensión pedagógica y didáctica para la especialidad de Orientación Educativa en departamentos de orientación de institutos de Educación Secundaria y equipos psicopedagógicos, en coordinación con el perfil universitario previo (Psicología, Pedagogía, Psicopedagogía) exigido por los anexos del RD 1834/2008.`
+      },
+      fp: {
+        title: `Especialidad en Módulos Profesionales (Procesos Industriales, Informática, Comunicación y Sanitario)`,
+        body: `Diseñada para las especialidades de Formación Profesional del sistema educativo contempladas en el RD 1834/2008 (procesos industriales, informática, imagen y sonido/comunicación y rama sanitaria). El Prácticum de 190 h presenciales se realiza directamente en centros que impartan ciclos formativos de la familia correspondiente.`
+      },
+      artes: {
+        title: `Especialidades de Dibujo, Diseño y Artes Plásticas · Música · Educación Física`,
+        body: `Cubren las especialidades docentes artísticas y motrices de Educación Secundaria y Bachillerato establecidas en el RD 1834/2008 (Dibujo, Música y Educación Física), manteniendo el tronco común obligatorio de 15 ECTS, los 24 ECTS específicos de especialidad, 15 ECTS de módulo práctico y 6 ECTS de TFM.`
+      }
+    };
+
+    // =========================================================================
+    // ESTADO DE LA APLICACIÓN (Persistido vía notebookAppApi)
+    // =========================================================================
+    let appState = {
+      degreeFilter: `all`,
+      levelFilter: `all`,
+      modalityFilter: `all`,
+      searchQuery: ``,
+      cfgsFilter: `all`,
+      cfgsSortKey: `maxEcts`,
+      cfgsSortDir: `desc`,
+      rdSpecialty: `lengua`,
+      sim: {
+        studyType: `grado`,
+        subjectType: `ordinaria`,
+        totalCredits: 240,
+        passedCredits: 192,
+        enrolled: `yes`,
+        pathway: `ordinaria`,
+        attempts: 3,
+        bestGrade: 3.45,
+        gpa: 6.45,
+        twoGe2: 2,
+        remainingEcts: 18
+      }
+    };
+
+    let ectsChartInstance = null;
+    let practicumChartInstance = null;
+
+    function getCssVar(name) {
+      return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    }
+
+    function showStatusToast(text) {
+      const el = document.getElementById(`persistence-status`);
+      if (!el) return;
+      el.textContent = text;
+      el.classList.add(`is-visible`);
+      setTimeout(function () {
+        el.classList.remove(`is-visible`);
+      }, 2200);
+    }
+
+    async function persistState() {
+      if (window.notebookAppApi && typeof window.notebookAppApi.setAppState === `function`) {
+        try {
+          await window.notebookAppApi.setAppState(appState);
+          showStatusToast(`Estado guardado`);
+        } catch (err) {
+          // Silencioso en caso de restricción de entorno
+        }
+      }
+    }
+
+    // =========================================================================
+    // SECCIÓN 01: CATÁLOGO DE MENCIONES Y ESPECIALIDADES
+    // =========================================================================
+    function setDegreeFilter(degId) {
+      appState.degreeFilter = degId;
+      const buttons = document.querySelectorAll(`.filter-chip`);
+      buttons.forEach(function (btn) {
+        if (btn.dataset.degree === degId) {
+          btn.classList.add(`is-active`);
+        } else {
+          btn.classList.remove(`is-active`);
+        }
+      });
+      renderCatalogCards();
+      persistState();
+    }
+
+    function onCatalogSearchChange(val) {
+      appState.searchQuery = val || ``;
+      renderCatalogCards();
+      persistState();
+    }
+
+    function onCatalogLevelChange(val) {
+      appState.levelFilter = val || `all`;
+      renderCatalogCards();
+      persistState();
+    }
+
+    function onCatalogModalityChange(val) {
+      appState.modalityFilter = val || `all`;
+      renderCatalogCards();
+      persistState();
+    }
+
+    function renderCatalogCards() {
+      const container = document.getElementById(`degree-cards-container`);
+      if (!container) return;
+
+      const q = appState.searchQuery.trim().toLowerCase();
+      const filteredDegrees = DEGREES_DATA.filter(function (d) {
+        if (appState.degreeFilter !== `all` && d.id !== appState.degreeFilter) return false;
+        if (appState.levelFilter !== `all` && d.level !== appState.levelFilter) return false;
+
+        const matchingItems = d.items.filter(function (it) {
+          const matchesModality = appState.modalityFilter === `all` || it.modality === appState.modalityFilter;
+          const matchesQuery = !q || it.name.toLowerCase().includes(q) || it.note.toLowerCase().includes(q) || d.name.toLowerCase().includes(q);
+          return matchesModality && matchesQuery;
+        });
+
+        if (appState.modalityFilter !== `all` && matchingItems.length === 0) return false;
+        if (q && matchingItems.length === 0 && !d.name.toLowerCase().includes(q) && !d.optNote.toLowerCase().includes(q)) return false;
+        return true;
+      });
+
+      if (filteredDegrees.length === 0) {
+        container.innerHTML = `<div class="figure-card" style="grid-column: 1 / -1;">
+          <h3 class="card-title">Sin resultados con los filtros actuales</h3>
+          <p style="color:var(--on-surface-variant);">Ninguna titulación o mención coincide con «${escapeHtml(appState.searchQuery)}» y los criterios seleccionados.</p>
+          <div style="margin-top:var(--space-sm);">
+            <button type="button" class="btn btn-secondary" onclick="clearCatalogFilters()">Limpiar filtros del catálogo</button>
+          </div>
+        </div>`;
+        return;
+      }
+
+      container.innerHTML = filteredDegrees.map(function (d) {
+        const badgeClass = d.id === `social` ? `tag-error` : (d.level === `master-especialidad` ? `tag-gold` : `tag-petrol`);
+        const itemsHtml = d.items.filter(function (it) {
+          if (appState.modalityFilter !== `all` && it.modality !== appState.modalityFilter) return false;
+          if (q && !d.name.toLowerCase().includes(q)) {
+            return it.name.toLowerCase().includes(q) || it.note.toLowerCase().includes(q);
+          }
+          return true;
+        }).map(function (it) {
+          const isMatch = q && (it.name.toLowerCase().includes(q) || it.note.toLowerCase().includes(q));
+          return `<li class="mentions-item ${isMatch ? `is-highlighted` : ``}">
+            <div>
+              <strong>${escapeHtml(it.name)}</strong>
+              <div style="font-size:0.82rem; color:var(--on-surface-variant);">${escapeHtml(it.note)}</div>
+            </div>
+            <span class="tag ${it.modality === `presencial-only` ? `tag-amber` : `tag-petrol`}" style="white-space:nowrap;">${escapeHtml(it.credits)}</span>
+          </li>`;
+        }).join(``);
+
+        const alertHtml = d.modalityAlert
+          ? `<div class="alert-box ${d.id === `social` ? `is-error` : `is-warning`}">${escapeHtml(d.modalityAlert)}</div>`
+          : ``;
+
+        return `<article class="degree-card">
+          <div class="degree-card-header">
+            <div>
+              <span class="figure-label">${escapeHtml(d.center)}</span>
+              <h3 class="card-title" style="margin-top:var(--space-xs);">${escapeHtml(d.name)}</h3>
+            </div>
+            <span class="tag ${badgeClass}">${escapeHtml(d.figureType)} · ${d.totalEcts} ECTS</span>
+          </div>
+
+          <div class="ects-strip">
+            ${d.ectsBreakdown.basica > 0 ? `<div class="ects-cell"><span class="ects-num">${d.ectsBreakdown.basica}</span><span class="ects-lbl">Básica</span></div>` : ``}
+            <div class="ects-cell"><span class="ects-num">${d.ectsBreakdown.obligatoria}</span><span class="ects-lbl">Obligat.</span></div>
+            <div class="ects-cell"><span class="ects-num">${d.ectsBreakdown.optativa}</span><span class="ects-lbl">Optat./Menc.</span></div>
+            <div class="ects-cell"><span class="ects-num">${d.ectsBreakdown.practicas}</span><span class="ects-lbl">Prácticas</span></div>
+            <div class="ects-cell"><span class="ects-num">${d.ectsBreakdown.tfg}</span><span class="ects-lbl">${d.totalEcts === 60 ? `TFM` : `TFG`}</span></div>
+          </div>
+
+          <p style="font-size:0.9rem;"><strong>Resumen normativo:</strong> ${escapeHtml(d.optNote)}</p>
+          ${alertHtml}
+
+          <div>
+            <span class="field-label" style="display:block; margin-bottom:var(--space-xs);">${d.id === `social` ? `Asignaturas optativas abiertas (no confieren mención)` : (d.totalEcts === 60 ? `Especialidades oficiales` : `Menciones oficiales verificadas (${d.items.length})`)}</span>
+            <ul class="mentions-list">${itemsHtml}</ul>
+          </div>
+
+          <div style="font-size:0.8rem; color:var(--on-surface-variant); border-top:var(--card-border); padding-top:var(--space-sm); margin-top:auto;">
+            <strong>Habilitación:</strong> ${escapeHtml(d.profession)}<br>
+            <strong>Base:</strong> ${escapeHtml(d.norm)}
+          </div>
+        </article>`;
+      }).join(``);
+    }
+
+    function clearCatalogFilters() {
+      appState.degreeFilter = `all`;
+      appState.levelFilter = `all`;
+      appState.modalityFilter = `all`;
+      appState.searchQuery = ``;
+      const searchEl = document.getElementById(`catalog-search`);
+      const lvlEl = document.getElementById(`catalog-level-filter`);
+      const modEl = document.getElementById(`catalog-modality-filter`);
+      if (searchEl) searchEl.value = ``;
+      if (lvlEl) lvlEl.value = `all`;
+      if (modEl) modEl.value = `all`;
+      setDegreeFilter(`all`);
+    }
+
+    // =========================================================================
+    // SECCIÓN 02: SIMULADOR REGLAMENTO 1/2026
+    // =========================================================================
+    function syncTotalCreditsFromSlider(val) {
+      const numEl = document.getElementById(`sim-total-credits-num`);
+      if (numEl) numEl.value = val;
+      onSimInputChange();
+    }
+
+    function syncTotalCreditsFromNumber(val) {
+      const rangeEl = document.getElementById(`sim-total-credits-range`);
+      if (rangeEl) rangeEl.value = val;
+      onSimInputChange();
+    }
+
+    function syncPassedCreditsFromSlider(val) {
+      const numEl = document.getElementById(`sim-passed-credits-num`);
+      if (numEl) numEl.value = val;
+      onSimInputChange();
+    }
+
+    function syncPassedCreditsFromNumber(val) {
+      const rangeEl = document.getElementById(`sim-passed-credits-range`);
+      if (rangeEl) rangeEl.value = val;
+      onSimInputChange();
+    }
+
+    function applySimPreset(presetKey) {
+      const presets = {
+        viable_grado: {
+          studyType: `grado`,
+          subjectType: `ordinaria`,
+          totalCredits: 240,
+          passedCredits: 192,
+          enrolled: `yes`,
+          pathway: `ordinaria`,
+          attempts: 3,
+          bestGrade: 3.45,
+          gpa: 6.45,
+          twoGe2: 2,
+          remainingEcts: 18
+        },
+        exclusion_tfg: {
+          studyType: `grado`,
+          subjectType: `practicum`,
+          totalCredits: 240,
+          passedCredits: 216,
+          enrolled: `yes`,
+          pathway: `ordinaria`,
+          attempts: 3,
+          bestGrade: 4.10,
+          gpa: 7.20,
+          twoGe2: 2,
+          remainingEcts: 6
+        },
+        excepcional_7a: {
+          studyType: `grado`,
+          subjectType: `ordinaria`,
+          totalCredits: 240,
+          passedCredits: 210,
+          enrolled: `yes`,
+          pathway: `excepcional`,
+          attempts: 6,
+          bestGrade: 2.65,
+          gpa: 5.80,
+          twoGe2: 3,
+          remainingEcts: 24
+        }
+      };
+
+      const p = presets[presetKey];
+      if (!p) return;
+      appState.sim = Object.assign({}, p);
+      writeSimToDom();
+      evaluateCompensation();
+      persistState();
+    }
+
+    function writeSimToDom() {
+      const s = appState.sim;
+      const setVal = function (id, v) {
+        const el = document.getElementById(id);
+        if (el) el.value = v;
+      };
+      setVal(`sim-study-type`, s.studyType);
+      setVal(`sim-subject-type`, s.subjectType);
+      setVal(`sim-total-credits-range`, s.totalCredits);
+      setVal(`sim-total-credits-num`, s.totalCredits);
+      setVal(`sim-passed-credits-range`, s.passedCredits);
+      setVal(`sim-passed-credits-num`, s.passedCredits);
+      setVal(`sim-enrolled`, s.enrolled);
+      setVal(`sim-pathway`, s.pathway);
+      setVal(`sim-attempts`, s.attempts);
+      setVal(`sim-best-grade`, s.bestGrade);
+      setVal(`sim-gpa`, s.gpa);
+      setVal(`sim-two-ge2`, s.twoGe2);
+      setVal(`sim-remaining-ects`, s.remainingEcts);
+    }
+
+    function readSimFromDom() {
+      const getVal = function (id, fallback) {
+        const el = document.getElementById(id);
+        return el ? el.value : fallback;
+      };
+      const studyType = getVal(`sim-study-type`, `grado`);
+      let totalCredits = parseFloat(getVal(`sim-total-credits-num`, `240`)) || 240;
+      if (studyType === `master` && totalCredits > 120) {
+        totalCredits = 60;
+        const r = document.getElementById(`sim-total-credits-range`);
+        const n = document.getElementById(`sim-total-credits-num`);
+        if (r) r.value = 60;
+        if (n) n.value = 60;
+      }
+
+      appState.sim = {
+        studyType: studyType,
+        subjectType: getVal(`sim-subject-type`, `ordinaria`),
+        totalCredits: totalCredits,
+        passedCredits: parseFloat(getVal(`sim-passed-credits-num`, `0`)) || 0,
+        enrolled: getVal(`sim-enrolled`, `yes`),
+        pathway: getVal(`sim-pathway`, `ordinaria`),
+        attempts: parseInt(getVal(`sim-attempts`, `0`), 10) || 0,
+        bestGrade: parseFloat(getVal(`sim-best-grade`, `0`)) || 0,
+        gpa: parseFloat(getVal(`sim-gpa`, `5`)) || 0,
+        twoGe2: parseInt(getVal(`sim-two-ge2`, `0`), 10) || 0,
+        remainingEcts: parseFloat(getVal(`sim-remaining-ects`, `0`)) || 0
+      };
+    }
+
+    function onSimInputChange() {
+      readSimFromDom();
+      evaluateCompensation();
+      persistState();
+    }
+
+    function evaluateCompensation() {
+      const s = appState.sim;
+      const pctPassed = s.totalCredits > 0 ? (s.passedCredits / s.totalCredits) * 100 : 0;
+      const reqCredits = (s.totalCredits * 0.75).toFixed(1);
+
+      const isScopeOk = s.studyType === `grado` || s.studyType === `doble`;
+      const isSubjectOk = s.subjectType === `ordinaria`;
+      const isPctOk = pctPassed >= 75;
+      const isEnrolledOk = s.enrolled === `yes`;
+
+      let checks = [];
+      let overallPass = false;
+      let headline = ``;
+      let summary = ``;
+
+      checks.push({
+        rule: `Art. 1 · Ámbito subjetivo (Grado oficial ULPGC)`,
+        actual: s.studyType === `grado` ? `Grado oficial` : (s.studyType === `doble` ? `Doble Grado` : (s.studyType === `master` ? `Máster oficial (excluido)` : `Movilidad/Homologación (excluido)`)),
+        ok: isScopeOk
+      });
+
+      checks.push({
+        rule: `Exclusiones absolutas e Inventario Junta de Facultad`,
+        actual: s.subjectType === `ordinaria` ? `Asignatura ordinaria` : (s.subjectType === `tfg` ? `TFG / TFM (excluido)` : (s.subjectType === `practicum` ? `Prácticum / Prácticas (excluido)` : `Inventario no compensable`)),
+        ok: isSubjectOk
+      });
+
+      checks.push({
+        rule: `Art. 4.2 · Matrícula activa en la asignatura y curso`,
+        actual: isEnrolledOk ? `Matriculado/a` : `Sin matrícula activa`,
+        ok: isEnrolledOk
+      });
+
+      if (s.pathway === `ordinaria`) {
+        const isAttemptsOk = s.attempts >= 3;
+        const isGradeOk = s.bestGrade >= 3.0;
+        const isGpaOk = s.gpa >= 6.0;
+
+        checks.push({
+          rule: `Art. 4.1 · ≥ 75% créditos superados (mín. ${reqCredits} ECTS)`,
+          actual: `${s.passedCredits} ECTS (${pctPassed.toFixed(1)}%)`,
+          ok: isPctOk
+        });
+        checks.push({
+          rule: `Art. 4.3 · Mínimo 3 convocatorias presentadas`,
+          actual: `${s.attempts} convocatorias`,
+          ok: isAttemptsOk
+        });
+        checks.push({
+          rule: `Art. 4.3 · Calificación ≥ 3,00 en alguna convocatoria`,
+          actual: `${s.bestGrade.toFixed(2)} puntos`,
+          ok: isGradeOk
+        });
+        checks.push({
+          rule: `Art. 4.3 · Nota media expediente ≥ 6,00 (RD 1125/2003)`,
+          actual: `${s.gpa.toFixed(2)} puntos`,
+          ok: isGpaOk
+        });
+
+        overallPass = isScopeOk && isSubjectOk && isEnrolledOk && isPctOk && isAttemptsOk && isGradeOk && isGpaOk;
+      } else {
+        const isConditionAltOk = s.twoGe2 >= 2 || s.gpa >= 6.0;
+        const isRemainingOk = s.remainingEcts <= 30;
+
+        checks.push({
+          rule: `Art. 5.1 · Agotada 7.ª conv. (o 6.ª sin resolución favorable)`,
+          actual: `Vía excepcional activa`,
+          ok: true
+        });
+        checks.push({
+          rule: `Art. 5.1 · ≥2 conv. con ≥ 2,00 puntos O media expediente ≥ 6,00`,
+          actual: `${s.twoGe2} conv. ≥2,00 · Media ${s.gpa.toFixed(2)}`,
+          ok: isConditionAltOk
+        });
+        checks.push({
+          rule: `Art. 5.1 · Máximo 30 ECTS pendientes (sin Prácticum ni TFG)`,
+          actual: `${s.remainingEcts} ECTS pendientes`,
+          ok: isRemainingOk
+        });
+
+        overallPass = isScopeOk && isSubjectOk && isEnrolledOk && isConditionAltOk && isRemainingOk;
+      }
+
+      const box = document.getElementById(`sim-verdict-box`);
+      const titleEl = document.getElementById(`sim-verdict-title`);
+      const sumEl = document.getElementById(`sim-verdict-summary`);
+      const tagsEl = document.getElementById(`sim-verdict-tags`);
+      const tbody = document.getElementById(`sim-checklist-body`);
+
+      if (!isScopeOk || !isSubjectOk) {
+        headline = `NO COMPENSABLE — EXCLUSIÓN NORMATIVA`;
+        summary = !isScopeOk
+          ? `El artículo 1.2 del Reglamento 1/2026 excluye expresamente a los másteres oficiales, títulos propios, movilidad entrante y homologación.`
+          : `Esta materia queda excluida de forma absoluta (TFG, TFM, Prácticum/Prácticas Externas o materia incluida en el inventario no compensable aprobado por la Junta de Facultad según la Instrucción 2026).`;
+      } else if (overallPass) {
+        headline = `SOLICITUD VIABLE — CUMPLE REQUISITOS`;
+        summary = `Cumple todos los requisitos objetivos del Reglamento 1/2026. Puede tramitarse por Sede Electrónica ULPGC (plazo abierto todo el curso). De resolverse favorablemente en el plazo máximo de 1 mes, figurará como «Compensada - 5» (5,00 puntos en media).`;
+      } else {
+        headline = `NO CUMPLE REQUISITOS ACTUALMENTE`;
+        summary = `Aunque el título y la asignatura entran en el ámbito del Reglamento 1/2026, existen criterios pendientes en la tabla inferior que impedirían la resolución favorable en primera instancia.`;
+      }
+
+      if (box) {
+        box.classList.remove(`is-pass`, `is-fail`);
+        box.classList.add(overallPass ? `is-pass` : `is-fail`);
+      }
+      if (titleEl) titleEl.textContent = headline;
+      if (sumEl) sumEl.textContent = summary;
+      if (tagsEl) {
+        tagsEl.innerHTML = `
+          <span class="tag ${overallPass ? `tag-positive` : `tag-error`}">${overallPass ? `Apto para solicitar` : `Rechazo previsible`}</span>
+          <span class="tag tag-petrol">Progreso: ${pctPassed.toFixed(1)}%</span>
+          <span class="tag tag-amber">Órgano: Decanato / Dirección del Centro</span>
+        `;
+      }
+      if (tbody) {
+        tbody.innerHTML = checks.map(function (c) {
+          return `<tr>
+            <td>${escapeHtml(c.rule)}</td>
+            <td class="num-cell">${escapeHtml(c.actual)}</td>
+            <td><span class="tag ${c.ok ? `tag-positive` : `tag-error`}">${c.ok ? `Cumple` : `No cumple`}</span></td>
+          </tr>`;
+        }).join(``);
+      }
+    }
+
+    // =========================================================================
+    // SECCIÓN 04: TABLA CFGS & EXPLORADOR RD 1834/2008
+    // =========================================================================
+    function renderCfgsTable(filterVal) {
+      if (filterVal !== undefined) {
+        appState.cfgsFilter = filterVal;
+      }
+      const tbody = document.getElementById(`cfgs-table-body`);
+      if (!tbody) return;
+
+      const rows = CFGS_DATA.filter(function (r) {
+        return appState.cfgsFilter === `all` || r.key === appState.cfgsFilter;
+      }).slice();
+
+      rows.sort(function (a, b) {
+        const key = appState.cfgsSortKey;
+        const dir = appState.cfgsSortDir === `asc` ? 1 : -1;
+        if (typeof a[key] === `number`) {
+          return (a[key] - b[key]) * dir;
+        }
+        return String(a[key]).localeCompare(String(b[key]), `es`) * dir;
+      });
+
+      tbody.innerHTML = rows.map(function (r) {
+        return `<tr>
+          <td><strong>${escapeHtml(r.cycle)}</strong></td>
+          <td class="num-cell"><span class="tag tag-petrol">${escapeHtml(r.maxLabel)}</span></td>
+          <td>${escapeHtml(r.module)}</td>
+          <td>${escapeHtml(r.subject)}</td>
+          <td class="num-cell"><strong>${r.ects}</strong></td>
+          <td>${escapeHtml(r.type)}</td>
+        </tr>`;
+      }).join(``);
+
+      persistState();
+    }
+
+    function sortCfgsTable(key) {
+      if (appState.cfgsSortKey === key) {
+        appState.cfgsSortDir = appState.cfgsSortDir === `asc` ? `desc` : `asc`;
+      } else {
+        appState.cfgsSortKey = key;
+        appState.cfgsSortDir = key === `maxEcts` || key === `ects` ? `desc` : `asc`;
+      }
+      renderCfgsTable();
+    }
+
+    function renderRd1834Card(specKey) {
+      if (specKey) appState.rdSpecialty = specKey;
+      const box = document.getElementById(`rd-detail-box`);
+      const data = RD_1834_MAP[appState.rdSpecialty] || RD_1834_MAP.lengua;
+      if (!box) return;
+      box.innerHTML = `<strong>${escapeHtml(data.title)}</strong><p style="margin-top:var(--space-xs);">${escapeHtml(data.body)}</p>`;
+      persistState();
+    }
+
+    // =========================================================================
+    // GRÁFICOS CHART.JS
+    // =========================================================================
+    function renderCharts() {
+      if (typeof Chart === `undefined`) return;
+
+      const c1 = getCssVar(`--data-1`);
+      const c2 = getCssVar(`--data-2`);
+      const c3 = getCssVar(`--data-3`);
+      const c4 = getCssVar(`--data-4`);
+      const c5 = getCssVar(`--data-5`);
+      const gridColor = getCssVar(`--outline-variant`);
+      const textColor = getCssVar(`--on-surface`);
+      const fontLabel = getCssVar(`--font-label`);
+
+      const ectsCanvas = document.getElementById(`ectsChart`);
+      if (ectsCanvas) {
+        if (ectsChartInstance) ectsChartInstance.destroy();
+        ectsChartInstance = new Chart(ectsCanvas.getContext(`2d`), {
+          type: `bar`,
+          data: {
+            labels: [`Primaria`, `Infantil`, `Ed. Social`, `MUFP`, `MUIMF`],
+            datasets: [
+              { label: `Básica`, data: [60, 100, 60, 0, 0], backgroundColor: c1 },
+              { label: `Obligatoria`, data: [100, 60, 130, 15, 30], backgroundColor: c5 },
+              { label: `Optativa / Mención / Esp.`, data: [30, 30, 24, 24, 12], backgroundColor: c2 },
+              { label: `Prácticas Externas`, data: [44, 44, 20, 15, 12], backgroundColor: c3 },
+              { label: `TFG / TFM`, data: [6, 6, 6, 6, 6], backgroundColor: c4 }
+            ]
+          },
+          options: {
+            indexAxis: `y`,
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: {
+                stacked: true,
+                grid: { color: gridColor },
+                ticks: { color: textColor, font: { family: fontLabel } },
+                title: { display: true, text: `Créditos ECTS`, color: textColor }
+              },
+              y: {
+                stacked: true,
+                grid: { display: false },
+                ticks: { color: textColor, font: { family: fontLabel } }
+              }
+            },
+            plugins: {
+              legend: {
+                position: `bottom`,
+                labels: { color: textColor, boxWidth: 12 }
+              }
+            }
+          }
+        });
+      }
+
+      const practCanvas = document.getElementById(`practicumChart`);
+      if (practCanvas) {
+        if (practicumChartInstance) practicumChartInstance.destroy();
+        practicumChartInstance = new Chart(practCanvas.getContext(`2d`), {
+          type: `bar`,
+          data: {
+            labels: [
+              `Infantil: Prácticum I (12 ECTS)`,
+              `Infantil: Prácticum II (17 ECTS)`,
+              `Infantil: Prácticum III (15 ECTS)`,
+              `MUFP: Prácticum Centro (12 ECTS)`,
+              `MUFP: Taller Habilidades (3 ECTS)`
+            ],
+            datasets: [
+              {
+                label: `Estancia directa / Carga Prácticum (h)`,
+                data: [300, 425, 375, 190, 0],
+                backgroundColor: c1
+              },
+              {
+                label: `Trabajo autónomo MUFP (h)`,
+                data: [0, 0, 0, 100, 0],
+                backgroundColor: c2
+              },
+              {
+                label: `Tutorías / Taller docente (h)`,
+                data: [0, 0, 0, 10, 75],
+                backgroundColor: c3
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: {
+                stacked: true,
+                grid: { display: false },
+                ticks: { color: textColor, font: { size: 11 } }
+              },
+              y: {
+                stacked: true,
+                grid: { color: gridColor },
+                ticks: { color: textColor, font: { family: fontLabel } },
+                title: { display: true, text: `Horas totales`, color: textColor }
+              }
+            },
+            plugins: {
+              legend: {
+                position: `bottom`,
+                labels: { color: textColor, boxWidth: 12 }
+              }
+            }
+          }
+        });
+      }
+    }
+
+    // =========================================================================
+    // UTILIDADES: EXPORTAR CSV & RESET SEGURO EN DOS PASOS
+    // =========================================================================
+    function exportPortalCSV() {
+      const lines = [
+        `Titulo;Nivel;ECTS_Totales;ECTS_Optativos;Figura;Numero_Menciones_Especialidades;Nota_Clave`,
+        `Grado en Educación Primaria;Grado;240;30;Mención (24 ECTS);8;Contenidos Canarios solo presencial`,
+        `Grado en Educación Infantil;Grado;240;30;Mención (30 ECTS);4;Prácticum 44 ECTS (300+425+375h)`,
+        `Grado en Educación Social;Grado;240;24;Sin mención;0;Reconocimiento CFGS: Integración 36 / Animación 18 / Infantil 6 ECTS`,
+        `MUFP (ULL/ULPGC);Máster;60;24;Especialidad;Varias;Prácticum 12 ECTS (190h centro+100h aut+10h tut) + 3 ECTS Taller`,
+        `MUIMF (ULL/ULPGC);Máster;60;12;Especialidad;2;Familia y Menores + Bienestar Social y Comunitario (no regulada)`
+      ];
+      const csv = lines.join(`\n`);
+
+      if (window.notebookAppApi && typeof window.notebookAppApi.triggerFileDownload === `function`) {
+        window.notebookAppApi.triggerFileDownload({
+          content: csv,
+          contentType: `text/csv`,
+          encoding: `UTF-8`,
+          filename: `resumen_memorias_ulpgc.csv`
+        });
+        showStatusToast(`CSV descargado`);
+      } else {
+        const blob = new Blob([csv], { type: `text/csv;charset=utf-8;` });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement(`a`);
+        link.href = url;
+        link.download = `resumen_memorias_ulpgc.csv`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        showStatusToast(`CSV exportado`);
+      }
+    }
+
+    function handleResetAll(btn) {
+      if (!btn) return;
+      if (btn.dataset.armed !== `true`) {
+        btn.dataset.armed = `true`;
+        btn.textContent = `Confirmar restablecimiento`;
+        setTimeout(function () {
+          if (btn.dataset.armed === `true`) {
+            btn.dataset.armed = `false`;
+            btn.textContent = `Restablecer vista`;
+          }
+        }, 4000);
+        return;
+      }
+      btn.dataset.armed = `false`;
+      btn.textContent = `Restablecer vista`;
+
+      clearCatalogFilters();
+      applySimPreset(`viable_grado`);
+      const cfgsSel = document.getElementById(`cfgs-filter`);
+      if (cfgsSel) cfgsSel.value = `all`;
+      renderCfgsTable(`all`);
+      const rdSel = document.getElementById(`rd-specialty-select`);
+      if (rdSel) rdSel.value = `lengua`;
+      renderRd1834Card(`lengua`);
+      showStatusToast(`Vista restablecida`);
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, `&amp;`)
+        .replace(/</g, `&lt;`)
+        .replace(/>/g, `&gt;`)
+        .replace(/"/g, `&quot;`)
+        .replace(/'/g, `&#39;`);
+    }
+
+    // =========================================================================
+    // INICIALIZACIÓN
+    // =========================================================================
+    async function initPortal() {
+      if (window.notebookAppApi && typeof window.notebookAppApi.getAppState === `function`) {
+        try {
+          const saved = await window.notebookAppApi.getAppState();
+          if (saved && typeof saved === `object`) {
+            appState = Object.assign({}, appState, saved);
+            if (saved.sim) {
+              appState.sim = Object.assign({}, appState.sim, saved.sim);
+            }
+          }
+        } catch (err) {
+          // Continuar con valores por defecto
+        }
+      }
+
+      // Sincronizar UI con estado cargado
+      const searchEl = document.getElementById(`catalog-search`);
+      const lvlEl = document.getElementById(`catalog-level-filter`);
+      const modEl = document.getElementById(`catalog-modality-filter`);
+      const cfgsEl = document.getElementById(`cfgs-filter`);
+      const rdEl = document.getElementById(`rd-specialty-select`);
+
+      if (searchEl) searchEl.value = appState.searchQuery || ``;
+      if (lvlEl) lvlEl.value = appState.levelFilter || `all`;
+      if (modEl) modEl.value = appState.modalityFilter || `all`;
+      if (cfgsEl) cfgsEl.value = appState.cfgsFilter || `all`;
+      if (rdEl) rdEl.value = appState.rdSpecialty || `lengua`;
+
+      const buttons = document.querySelectorAll(`.filter-chip`);
+      buttons.forEach(function (btn) {
+        if (btn.dataset.degree === appState.degreeFilter) {
+          btn.classList.add(`is-active`);
+        } else {
+          btn.classList.remove(`is-active`);
+        }
+      });
+
+      writeSimToDom();
+      renderCatalogCards();
+      evaluateCompensation();
+      renderCfgsTable();
+      renderRd1834Card(appState.rdSpecialty);
+      renderCharts();
+
+      if (typeof lucide !== `undefined` && typeof lucide.createIcons === `function`) {
+        lucide.createIcons();
+      }
+
+      if (window.notebookAppApi && typeof window.notebookAppApi.notifyAppReady === `function`) {
+        window.notebookAppApi.notifyAppReady();
+      }
+    }
+
+    document.addEventListener(`DOMContentLoaded`, initPortal);
+  </script>
+</body>
+</html>
