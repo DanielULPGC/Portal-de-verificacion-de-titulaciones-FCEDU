@@ -2,6 +2,8 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self'; frame-src 'self' blob: data:; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Portal de Memorias de Verificación y Normativa ULPGC</title>
     <meta name="description" content="Aplicativo visual interactivo y cuaderno académico para explorar las Memorias de Verificación de Grados y Másteres en Educación de la ULPGC, el simulador del Reglamento 1/2026 de Evaluación Compensatoria, el desglose de Prácticum, el reconocimiento desde CFGS y el RD 1834/2008." />
@@ -12,14 +14,13 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="theme-color" content="#1f4e5f" />
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=IBM+Plex+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;0,8..60,700;1,8..60,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./assets/fonts/fonts.css">
     <script type="module" crossorigin src="./assets/index-D2ldJwqi.js"></script>
     <link rel="modulepreload" crossorigin href="./assets/jsx-runtime-d5rYQebX.js">
     <link rel="stylesheet" crossorigin href="./assets/index-BM83A_N7.css">
   </head>
   <body class="bg-[#11161d] text-[#f4f1ea] antialiased selection:bg-[#f2b705] selection:text-[#11161d] overflow-hidden">
     <div id="root"></div>
+    <noscript><div style="max-width:42rem;margin:4rem auto;padding:1.5rem;font:16px/1.5 system-ui,sans-serif;background:#faf9f5;color:#17181a;border-radius:12px">El Portal de Memorias de Verificación de la Facultad de Ciencias de la Educación (ULPGC) necesita JavaScript para funcionar. Actívelo en su navegador o consulte la información oficial en <a href="https://educ.ulpgc.es" style="color:#1f4e5f">educ.ulpgc.es</a>.</div></noscript>
   </body>
 </html>
