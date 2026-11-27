@@ -1,6 +1,6 @@
 # Portal de Memorias de Verificación y Normativa · FCEDU-ULPGC
 
-Aplicativo web interactivo para consultar las Memorias de Verificación de los títulos de la Facultad de Ciencias de la Educación (FCEDU) de la Universidad de Las Palmas de Gran Canaria: Grados en Educación Infantil, Educación Primaria y Educación Social; Doble Grado en Educación Infantil y Educación Primaria; Máster en Formación del Profesorado (MUFP) y Máster en Intervención y Mediación Familiar, Social y Comunitaria (MUIMFSC). Incluye un simulador del Reglamento 1/2026 de Evaluación Compensatoria, el desglose del Prácticum, el acceso desde CFGS, la atribución docente (RD 1834/2008 y RD 1594/2011), un cronograma académico descargable (.ics), un comparador normativo, casos prácticos para el PAT y un glosario.
+Aplicativo web interactivo para consultar las Memorias de Verificación de los títulos de la Facultad de Ciencias de la Educación (FCEDU) de la Universidad de Las Palmas de Gran Canaria: Grados en Educación Infantil, Educación Primaria y Educación Social; Doble Grado en Educación Infantil y Educación Primaria; Máster en Formación del Profesorado (MUFP) y Máster en Intervención y Mediación Familiar, Social y Comunitaria (MUIMFSC). Incluye un simulador del Reglamento 1/2026 de Evaluación Compensatoria, el desglose del Prácticum, el acceso desde CFGS, la atribución docente (RD 1834/2008 y RD 1594/2011), un cronograma académico descargable (.ics), un comparador normativo, casos prácticos para el PAT, un glosario y un buscador general (botón «Buscar» o Ctrl+K) que admite sinónimos y no distingue tildes.
 
 > **Aviso.** Recurso de apoyo con finalidad informativa y didáctica. No sustituye a la normativa publicada en el BOE, el BOC o el BOULPGC ni a las resoluciones de los órganos competentes de la ULPGC.
 
@@ -19,6 +19,7 @@ index.html · 404.html · favicon.svg · .nojekyll
 assets/
   index-*.js, *.js        aplicación compilada (React + Vite) y módulos diferidos
   index-*.css             estilos
+  buscador-acceso.js      botón visible que abre el buscador (mejora añadida)
   fonts/                  tipografías autoalojadas (fonts.css + woff2)
   aistudio/               dossier normativo en HTML autónomo
     vendor/               Chart.js 4.5.1 y Lucide 1.43.0 (copias locales)
